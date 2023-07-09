@@ -12,6 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "billing-sdk"
+rootProject.name = "getapp-billing-android"
 include ':app'
 include ':billing'
