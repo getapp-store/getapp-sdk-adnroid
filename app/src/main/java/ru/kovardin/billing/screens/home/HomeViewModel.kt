@@ -2,12 +2,12 @@ package ru.kovardin.billing.screens.home
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import ru.kovardin.billing.Billing
-import ru.kovardin.billing.Product
-import ru.kovardin.billing.ProductsHandler
-import ru.kovardin.billing.ProductsResponse
-import ru.kovardin.billing.PurchaseHandler
-import ru.kovardin.billing.PurchaseResponse
+import ru.kovardin.getappbilling.Billing
+import ru.kovardin.getappbilling.Product
+import ru.kovardin.getappbilling.ProductsHandler
+import ru.kovardin.getappbilling.ProductsResponse
+import ru.kovardin.getappbilling.PurchaseHandler
+import ru.kovardin.getappbilling.PurchaseResponse
 
 class HomeViewModel : ViewModel() {
     val products = mutableStateListOf<Product>()
