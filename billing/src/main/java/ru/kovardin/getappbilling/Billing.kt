@@ -2,6 +2,8 @@ package ru.kovardin.getappbilling
 
 import android.content.Context
 import android.util.Log
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.LinearLayout
@@ -13,27 +15,12 @@ import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import ru.kovardin.getappbilling.utils.param
 import java.io.IOException
-
-
-interface ProductsHandler {
-    fun onFailure(e: Throwable)
-    fun onSuccess(resp: ProductsResponse)
-}
-
-data class Product(val id: String, val title: String, val amount: Int)
-
-data class ProductsResponse(val items: List<Product>)
-
-interface PurchaseHandler {
-    fun onFailure(e: Throwable)
-    fun onSuccess(resp: PurchaseResponse)
-}
-
-data class PurchaseResponse(val status: String)
+import java.net.URL
 
 class Billing(
-    val token: String,
+    val app: String,
     val api: String,
     val context: Context,
 ) {
@@ -41,8 +28,7 @@ class Billing(
 
     fun products(handler: ProductsHandler) {
         val request = Request.Builder()
-            .url("${api}/v1/products")
-            .addHeader("Authorization", "Bearer ${token}")
+            .url("${api}/v1/billing/${app}/products")
             .build()
 
         client.newCall(request).enqueue(object : Callback {
@@ -56,7 +42,19 @@ class Billing(
                         handler.onFailure(IOException("Unexpected code $response"))
                     }
 
-                    val resp = Gson().fromJson(response.body!!.string(), ProductsResponse::class.java)
+                    val body = response.body?.string().orEmpty()
+
+                    Log.i("Billing", body)
+
+                    var resp: ProductsResponse
+
+                    try {
+                        resp = Gson().fromJson(body, ProductsResponse::class.java)
+                    } catch (e: Exception) {
+                        Log.e("Billing", e.message.orEmpty())
+                        handler.onFailure(e)
+                        return
+                    }
 
                     handler.onSuccess(resp)
                 }
@@ -65,63 +63,126 @@ class Billing(
     }
 
     fun purchase(id: String, handler: PurchaseHandler) {
-        dialog(id)
+        auth(object : AuthHandler {
+            override fun onFailure(e: Throwable) {
+                handler.onFailure(e)
+            }
+
+            override fun onSuccess(resp: AuthResponse) {
+                val token = resp.token
+
+                val dial = Dialog(context = context, url = "${api}/v1/billing/${app}/payments/purchase?product=${id}")
+                dial.client = object : WebViewClient() {
+                    override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
+                        val url = request!!.url.toString()
+                        return if (url.contains("${api}/v1/billing/${app}")) {
+                            try {
+                                val httpClient = OkHttpClient()
+                                val request: Request = Request.Builder()
+                                    .url(url.trim())
+                                    .addHeader("X-User-Key", "Bearer ${token}") // Example header
+                                    .build()
+                                val response = httpClient.newCall(request).execute()
+                                WebResourceResponse(
+                                    null,
+                                    response.header("content-encoding", "utf-8"),
+                                    response.body!!.byteStream()
+                                )
+                            } catch (e: Exception) {
+                                Log.e("Billing", "error on load", e)
+                                handler.onFailure(e)
+                                return null
+                            }
+                        } else {
+                            super.shouldInterceptRequest(view, request)
+                        }
+                    }
+
+                    override fun shouldOverrideUrlLoading(w: WebView, u: String): Boolean {
+                        w.loadUrl(u)
+                        return true
+                    }
+
+                    override fun onPageFinished(view: WebView?, url: String?) {
+                        if (url?.contains("success?payment=") ?: false) {
+                            val u = URL(url)
+                            val payment = u.param("payment").orEmpty()
+                            val status = u.param("status").orEmpty()
+                            val product = u.param("product").orEmpty()
+
+                            dial.close()
+
+                            handler.onSuccess(PurchaseResponse(id = payment, status = status, product = product))
+                        }
+                    }
+                }
+
+                dial.open()
+            }
+        })
     }
 
-    private fun dialog(id: String) {
-        // create web view
-        val web = WebView(context)
-        web.setLayoutParams(
-            LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT
-            )
-        )
-        web.settings.javaScriptEnabled = true
-        web.setWebViewClient(object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(w: WebView, u: String) : Boolean {
+    fun restore(handler: RestoreHandler) {
+        // restore all purchase
+        // load webview
+        // track success results
+
+        auth(object : AuthHandler {
+            override fun onFailure(e: Throwable) {
+                handler.onFailure(e)
+            }
+
+            override fun onSuccess(resp: AuthResponse) {
+                // make dialog with purchase restore
+            }
+
+        })
+    }
+
+    private fun auth(handler: AuthHandler) {
+
+        val dial = Dialog(context = context, url = "${api}/v1/users/${app}/choose")
+
+        dial.client = object : WebViewClient() {
+            override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
+                return super.shouldInterceptRequest(view, request)
+            }
+
+            override fun shouldOverrideUrlLoading(w: WebView, u: String): Boolean {
                 w.loadUrl(u)
                 return true
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
-                Log.w("WebViewActivity", url.orEmpty())
+                if (url?.contains("success?token=") ?: false) {
+                    // save token for next requests
+                    val token = URL(url).param("token").orEmpty()
+
+                    dial.close()
+
+                    handler.onSuccess(AuthResponse(token = token))
+                }
+
+                Log.w("Billing", url.orEmpty())
             }
-        })
-        web.loadUrl("https://billing.getapp.store/v1/users/login?product=${id}")
+        }
 
-        // create main view
-        val height = (context.getResources().getDisplayMetrics().heightPixels / 1.5).toInt()
-        val view = LinearLayout(context)
-        view.layoutParams = RelativeLayout.LayoutParams(
-            RelativeLayout.LayoutParams.MATCH_PARENT,
-            height
-        )
-
-        view.setPadding(0, 32, 0, 0)
-        view.addView(web)
-
-        // create dialog
-        val dialog = BottomSheetDialog(context) // if it is a activity than @DetailActivity
-        dialog.setContentView(view)
-        dialog.show()
+        dial.open()
     }
 
-    fun consume(id: String) {
-        // call api and consume purchase
-    }
+    internal fun dialog() {
 
-    fun restore() {
-        // restore all purchase
-        // load webview
-        // track success results
     }
 
     companion object {
         lateinit var client: Billing
 
-        fun init(token: String, api: String = "https://billing.getapp.store", context: Context) {
-            client = Billing(token = token, api = api, context = context)
+        fun init(
+            app: String,
+            api: String = "https://service.getapp.store",
+            context: Context,
+        ) {
+            client = Billing(app = app, api = api, context = context)
         }
     }
 }

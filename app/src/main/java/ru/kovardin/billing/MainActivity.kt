@@ -1,6 +1,7 @@
 package ru.kovardin.billing
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
@@ -10,11 +11,10 @@ import ru.kovardin.getappbilling.Billing
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-
         Billing.init(
-            token = "frfwiergy7f38gUTFfudwefd7y8GIY",
-            api = "https://billing.getapp.store",
-            context = this
+            app = "1",
+            api = "https://service.getapp.store",
+            context = this,
         )
 
         super.onCreate(savedInstanceState)
