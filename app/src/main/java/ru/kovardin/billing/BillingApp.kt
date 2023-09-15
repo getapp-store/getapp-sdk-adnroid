@@ -13,6 +13,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.Modifier
 import ru.kovardin.billing.screens.home.HomeScreen
 import ru.kovardin.billing.screens.home.HomeViewModel
+import ru.kovardin.billing.screens.payments.PaymentsScreen
+import ru.kovardin.billing.screens.payments.PaymentsViewModel
 import ru.kovardin.billing.screens.products.ProductsScreen
 import ru.kovardin.billing.screens.products.ProductsViewModel
 
@@ -33,15 +35,17 @@ fun BillingApp(modifier: Modifier = Modifier) {
         ) {
             val homeViewModel = HomeViewModel()
             val productsViewModel = ProductsViewModel()
+            val paymentsViewModel = PaymentsViewModel()
 
             NavHost(navController = nav, startDestination = "home") {
                 composable("home") {
-                    homeViewModel.fetch()
                     HomeScreen(model = homeViewModel, nav = nav)
                 }
-                composable("settings") {
-                    productsViewModel.fetch()
+                composable("products") {
                     ProductsScreen(model = productsViewModel, nav = nav)
+                }
+                composable("payments") {
+                    PaymentsScreen(model = paymentsViewModel, nav = nav)
                 }
             }
         }

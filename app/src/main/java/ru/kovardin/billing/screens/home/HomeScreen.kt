@@ -17,21 +17,31 @@ import androidx.navigation.NavHostController
 @Composable
 fun HomeScreen(model: HomeViewModel, nav: NavHostController) {
     Column {
-        model.products.forEach { product ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(product.title + ": ")
-                Text(product.amount.toString())
-                Button(onClick = {
-                    model.purchase(product.id)
-                }) {
-                    Text(text = "Buy")
-                }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Button(onClick = {
+                nav.navigate("products")
+            }) {
+                Text(text = "Products")
             }
-            Divider()
         }
+        Divider()
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Button(onClick = {
+                nav.navigate("payments")
+            }) {
+                Text(text = "Payments")
+            }
+        }
+        Divider()
     }
 }

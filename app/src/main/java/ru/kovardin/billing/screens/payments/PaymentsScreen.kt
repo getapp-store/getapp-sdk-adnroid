@@ -1,4 +1,4 @@
-package ru.kovardin.billing.screens.products
+package ru.kovardin.billing.screens.payments
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,26 +13,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 
+
 @Composable
-fun ProductsScreen(model: ProductsViewModel, nav: NavHostController) {
+fun PaymentsScreen(model: PaymentsViewModel, nav: NavHostController) {
     LaunchedEffect(Unit){
         model.fetch()
     }
 
     Column {
-        model.products.forEach { product ->
+        model.payments.forEach { payment ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(product.title + ": ")
-                Text(product.amount.toString())
-                Button(onClick = {
-                    model.purchase(product.id)
-                }) {
-                    Text(text = "Buy")
-                }
+                Text(payment.id)
+                Text(payment.title)
+                Text(payment.status)
+                Text(payment.amount.toString())
             }
             Divider()
         }

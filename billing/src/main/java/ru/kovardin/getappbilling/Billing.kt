@@ -6,9 +6,6 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import okhttp3.Call
 import okhttp3.Callback
@@ -25,6 +22,7 @@ class Billing(
     val context: Context,
 ) {
     private val client = OkHttpClient()
+    private var savedToken = "";
 
     fun products(handler: ProductsHandler) {
         val request = Request.Builder()
@@ -43,10 +41,7 @@ class Billing(
                     }
 
                     val body = response.body?.string().orEmpty()
-
-                    Log.i("Billing", body)
-
-                    var resp: ProductsResponse
+                    val resp: ProductsResponse
 
                     try {
                         resp = Gson().fromJson(body, ProductsResponse::class.java)
@@ -71,8 +66,8 @@ class Billing(
             override fun onSuccess(resp: AuthResponse) {
                 val token = resp.token
 
-                val dial = Dialog(context = context, url = "${api}/v1/billing/${app}/payments/purchase?product=${id}")
-                dial.client = object : WebViewClient() {
+                val dialog = Dialog(context = context, url = "${api}/v1/billing/${app}/payments/purchase?product=${id}")
+                dialog.client = object : WebViewClient() {
                     override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
                         val url = request!!.url.toString()
                         return if (url.contains("${api}/v1/billing/${app}")) {
@@ -110,23 +105,19 @@ class Billing(
                             val status = u.param("status").orEmpty()
                             val product = u.param("product").orEmpty()
 
-                            dial.close()
+                            dialog.close()
 
                             handler.onSuccess(PurchaseResponse(id = payment, status = status, product = product))
                         }
                     }
                 }
 
-                dial.open()
+                dialog.open()
             }
         })
     }
 
     fun restore(handler: RestoreHandler) {
-        // restore all purchase
-        // load webview
-        // track success results
-
         auth(object : AuthHandler {
             override fun onFailure(e: Throwable) {
                 handler.onFailure(e)
@@ -134,16 +125,52 @@ class Billing(
 
             override fun onSuccess(resp: AuthResponse) {
                 // make dialog with purchase restore
-            }
+                val token = resp.token
 
+                val request = Request.Builder()
+                    .url("${api}/v1/billing/${app}/payments/restore")
+                    .addHeader("X-User-Key", "Bearer $token")
+                    .build()
+
+                client.newCall(request).enqueue(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        handler.onFailure(e)
+                    }
+
+                    override fun onResponse(call: Call, response: Response) {
+                        response.use {
+                            if (!response.isSuccessful) {
+                                handler.onFailure(IOException("Unexpected code $response"))
+                            }
+
+                            val body = response.body?.string().orEmpty()
+                            val resp: RestoreResponse
+
+                            try {
+                                resp = Gson().fromJson(body, RestoreResponse::class.java)
+                            } catch (e: Exception) {
+                                Log.e("Billing", e.message.orEmpty())
+                                handler.onFailure(e)
+                                return
+                            }
+
+                            handler.onSuccess(resp)
+                        }
+                    }
+                })
+            }
         })
     }
 
     private fun auth(handler: AuthHandler) {
+        // TODO: нужно продумать как сбрасывать токен
+        if (savedToken != "") {
+            handler.onSuccess(AuthResponse(token = savedToken))
+            return
+        }
 
-        val dial = Dialog(context = context, url = "${api}/v1/users/${app}/choose")
-
-        dial.client = object : WebViewClient() {
+        val dialog = Dialog(context = context, url = "${api}/v1/users/${app}/choose")
+        dialog.client = object : WebViewClient() {
             override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
                 return super.shouldInterceptRequest(view, request)
             }
@@ -158,8 +185,9 @@ class Billing(
                     // save token for next requests
                     val token = URL(url).param("token").orEmpty()
 
-                    dial.close()
+                    dialog.close()
 
+                    savedToken = token
                     handler.onSuccess(AuthResponse(token = token))
                 }
 
@@ -167,11 +195,7 @@ class Billing(
             }
         }
 
-        dial.open()
-    }
-
-    internal fun dialog() {
-
+        dialog.open()
     }
 
     companion object {
