@@ -12,15 +12,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 class Dialog(val context: Context, val url: String) {
 
     lateinit var client: WebViewClient
-    var web: WebView
-    var sheet: BottomSheetDialog
-    var view: LinearLayout
+    private var web: WebView = WebView(context)
+    private var sheet: BottomSheetDialog = BottomSheetDialog(context)
+    private var view: LinearLayout = LinearLayout(context)
 
     init {
-        web = WebView(context)
-        sheet = BottomSheetDialog(context)
-        view = LinearLayout(context)
-
         web.setLayoutParams(
             LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -34,7 +30,7 @@ class Dialog(val context: Context, val url: String) {
     fun open() {
         web.webViewClient = client
 
-        val height = (context.getResources().getDisplayMetrics().heightPixels / 1.5).toInt()
+        val height = (context.resources.displayMetrics.heightPixels / 1.5).toInt()
         view.layoutParams = RelativeLayout.LayoutParams(
             RelativeLayout.LayoutParams.MATCH_PARENT,
             height
