@@ -1,0 +1,26 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  build:
+    cmds:
+      - ./gradlew billing:assemble
+
+  publish:
+    cmds:
+      - ./gradlew billing:publish
+
+  flutter:
+    deps:
+      - build
+    cmds:
+      - cp ./billing/build/outputs/aar/billing-release.aar ../flutter/flutter_getapp_billing/android/libs/

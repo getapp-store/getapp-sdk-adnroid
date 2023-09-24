@@ -11,6 +11,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.Modifier
+import ru.kovardin.billing.screens.boosty.BoostyScreen
+import ru.kovardin.billing.screens.boosty.BoostyViewModel
 import ru.kovardin.billing.screens.home.HomeScreen
 import ru.kovardin.billing.screens.home.HomeViewModel
 import ru.kovardin.billing.screens.payments.PaymentsScreen
@@ -36,6 +38,7 @@ fun BillingApp(modifier: Modifier = Modifier) {
             val homeViewModel = HomeViewModel()
             val productsViewModel = ProductsViewModel()
             val paymentsViewModel = PaymentsViewModel()
+            val boostyViewModel = BoostyViewModel()
 
             NavHost(navController = nav, startDestination = "home") {
                 composable("home") {
@@ -46,6 +49,9 @@ fun BillingApp(modifier: Modifier = Modifier) {
                 }
                 composable("payments") {
                     PaymentsScreen(model = paymentsViewModel, nav = nav)
+                }
+                composable("boosty") {
+                    BoostyScreen(model = boostyViewModel, nav = nav)
                 }
             }
         }

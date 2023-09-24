@@ -27,6 +27,7 @@ class Billing(
     fun products(handler: ProductsHandler) {
         val request = Request.Builder()
             .url("${api}/v1/billing/${app}/products")
+            // @todo: apitoken?
             .build()
 
         client.newCall(request).enqueue(object : Callback {
@@ -37,6 +38,10 @@ class Billing(
             override fun onResponse(call: Call, response: Response) {
                 response.use {
                     if (!response.isSuccessful) {
+                        if (response.code == 403) {
+                            savedToken = ""
+                        }
+
                         handler.onFailure(IOException("Unexpected code $response"))
                     }
 
@@ -58,6 +63,7 @@ class Billing(
     }
 
     fun purchase(id: String, handler: PurchaseHandler) {
+        // show auth dialog
         auth(object : AuthHandler {
             override fun onFailure(e: Throwable) {
                 handler.onFailure(e)
@@ -66,6 +72,7 @@ class Billing(
             override fun onSuccess(resp: AuthResponse) {
                 val token = resp.token
 
+                // show payment dialog
                 val dialog = Dialog(context = context, url = "${api}/v1/billing/${app}/payments/purchase?product=${id}")
                 dialog.client = object : WebViewClient() {
                     override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
@@ -78,6 +85,13 @@ class Billing(
                                     .addHeader("X-User-Key", "Bearer ${token}") // Example header
                                     .build()
                                 val response = httpClient.newCall(request).execute()
+
+                                if (response.code == 403) {
+                                    savedToken = ""
+                                    handler.onFailure(IOException("Unexpected code $response"))
+                                    return null
+                                }
+
                                 WebResourceResponse(
                                     null,
                                     response.header("content-encoding", "utf-8"),
@@ -100,14 +114,47 @@ class Billing(
 
                     override fun onPageFinished(view: WebView?, url: String?) {
                         if (url?.contains("success?payment=") ?: false) {
+                            // check payment after success window
                             val u = URL(url)
                             val payment = u.param("payment").orEmpty()
-                            val status = u.param("status").orEmpty()
-                            val product = u.param("product").orEmpty()
+
+                            val request = Request.Builder()
+                                .url("${api}/v1/billing/${app}/payments/${payment}")
+                                .addHeader("X-User-Key", "Bearer ${token}")
+                                .build()
+
+                            client.newCall(request).enqueue(object : Callback {
+                                override fun onFailure(call: Call, e: IOException) {
+                                    handler.onFailure(e)
+                                }
+
+                                override fun onResponse(call: Call, response: Response) {
+                                    response.use {
+                                        if (!response.isSuccessful) {
+                                            if (response.code == 403) {
+                                                savedToken = ""
+                                            }
+
+                                            handler.onFailure(IOException("Unexpected code $response"))
+                                        }
+
+                                        val body = response.body?.string().orEmpty()
+                                        val resp: PurchaseResponse
+
+                                        try {
+                                            resp = Gson().fromJson(body, PurchaseResponse::class.java)
+                                        } catch (e: Exception) {
+                                            Log.e("Billing", e.message.orEmpty())
+                                            handler.onFailure(e)
+                                            return
+                                        }
+
+                                        handler.onSuccess(resp)
+                                    }
+                                }
+                            })
 
                             dialog.close()
-
-                            handler.onSuccess(PurchaseResponse(id = payment, status = status, product = product))
                         }
                     }
                 }
@@ -140,6 +187,10 @@ class Billing(
                     override fun onResponse(call: Call, response: Response) {
                         response.use {
                             if (!response.isSuccessful) {
+                                if (response.code == 403) {
+                                    savedToken = ""
+                                }
+
                                 handler.onFailure(IOException("Unexpected code $response"))
                             }
 
@@ -164,6 +215,7 @@ class Billing(
 
     private fun auth(handler: AuthHandler) {
         // TODO: нужно продумать как сбрасывать токен
+        // если ответ 403?
         if (savedToken != "") {
             handler.onSuccess(AuthResponse(token = savedToken))
             return
