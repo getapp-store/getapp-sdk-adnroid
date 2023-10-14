@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'ru.kovardin.boosty'
+    namespace 'ru.rustore.utils'
     compileSdk 33
 
     defaultConfig {
@@ -32,21 +32,9 @@ android {
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.9.0'
-    implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
-
-    // define a BOM and its version
-    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.11.0"))
-
-    // define any required OkHttp artifacts without version
-    implementation("com.squareup.okhttp3:okhttp")
-    implementation("com.squareup.okhttp3:logging-interceptor")
-    implementation 'com.google.code.gson:gson:2.10.1'
-
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
-    implementation project(path: ':utils')
 }

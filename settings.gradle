@@ -16,3 +16,4 @@ rootProject.name = "getapp-android"
 include ':app'
 include ':billing'
 include ':boosty'
+include ':utils'
