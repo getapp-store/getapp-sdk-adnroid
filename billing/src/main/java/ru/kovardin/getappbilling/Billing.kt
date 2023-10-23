@@ -17,6 +17,8 @@ import ru.kovardin.utils.Dialog
 import java.io.IOException
 import java.net.URL
 
+const val TAG = "Billing"
+
 class Billing(
     val app: String,
     val api: String,
@@ -44,6 +46,7 @@ class Billing(
                         }
 
                         handler.onFailure(IOException("Unexpected code $response"))
+                        return
                     }
 
                     val body = response.body?.string().orEmpty()
@@ -52,7 +55,7 @@ class Billing(
                     try {
                         resp = Gson().fromJson(body, ProductsResponse::class.java)
                     } catch (e: Exception) {
-                        Log.e("Billing", e.message.orEmpty())
+                        Log.d(TAG, e.message.orEmpty())
                         handler.onFailure(e)
                         return
                     }
@@ -99,7 +102,7 @@ class Billing(
                                     response.body!!.byteStream()
                                 )
                             } catch (e: Exception) {
-                                Log.e("Billing", "error on load", e)
+                                Log.d(TAG, "error on load", e)
                                 handler.onFailure(e)
                                 return null
                             }
@@ -145,7 +148,7 @@ class Billing(
                                         try {
                                             resp = Gson().fromJson(body, PurchaseResponse::class.java)
                                         } catch (e: Exception) {
-                                            Log.e("Billing", e.message.orEmpty())
+                                            Log.d(TAG, e.message.orEmpty())
                                             handler.onFailure(e)
                                             return
                                         }
@@ -201,7 +204,7 @@ class Billing(
                             try {
                                 resp = Gson().fromJson(body, RestoreResponse::class.java)
                             } catch (e: Exception) {
-                                Log.e("Billing", e.message.orEmpty())
+                                Log.d(TAG, e.message.orEmpty())
                                 handler.onFailure(e)
                                 return
                             }
@@ -244,7 +247,7 @@ class Billing(
                     handler.onSuccess(AuthResponse(token = token))
                 }
 
-                Log.w("Billing", url.orEmpty())
+                Log.d(TAG, url.orEmpty())
             }
         }
 

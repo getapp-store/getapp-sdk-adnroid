@@ -1,9 +1,13 @@
 package ru.kovardin.billing.screens.boosty
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import ru.kovardin.boosty.Boosty
+import ru.kovardin.boosty.SubscribeHandler
+import ru.kovardin.boosty.Subscriber
 import ru.kovardin.boosty.Subscription
 import ru.kovardin.boosty.SubscriptionsHandler
 import ru.kovardin.boosty.SubscriptionsResponse
@@ -26,7 +30,16 @@ class BoostyViewModel: ViewModel() {
         })
     }
 
-    fun subscribe(id: String) {
-        Boosty.client.subscribe()
+    fun subscribe(context: Context) {
+        Boosty.client.subscribe(object : SubscribeHandler {
+            override fun onFailure(e: Throwable) {
+                Log.e("BoostyViewModel", "error on subscriber ${e.message}")
+            }
+
+            override fun onSuccess(resp: Subscriber) {
+                Log.d("BoostyViewModel", "subscriber: ${resp}")
+                Toast.makeText(context, "${resp.subscription.name}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

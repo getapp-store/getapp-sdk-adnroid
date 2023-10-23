@@ -2,6 +2,7 @@ package ru.kovardin.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.DialogInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.LinearLayout
@@ -38,12 +39,17 @@ class Dialog(val context: Context, val url: String) {
 
         web.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
         web.setScrollbarFadingEnabled(false);
+
+    }
+
+    fun setOnDismissListener(listener: DialogInterface.OnDismissListener?) {
+        sheet.setOnDismissListener(listener)
     }
 
     fun open() {
         web.webViewClient = client
 
-        val height = (context.resources.displayMetrics.heightPixels / 1.5).toInt()
+        val height = context.resources.displayMetrics.heightPixels
         view.layoutParams = RelativeLayout.LayoutParams(
             RelativeLayout.LayoutParams.MATCH_PARENT,
             height

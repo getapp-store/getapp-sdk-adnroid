@@ -39,7 +39,7 @@ fun BoostyScreen(model: BoostyViewModel, nav: NavHostController) {
                 Text(subscription.title + ": ")
                 Text(subscription.amount.toString())
                 Button(onClick = {
-                    model.subscribe(subscription.id)
+                    model.subscribe(context)
                 }) {
                     Text(text = "Subscribe")
                 }

@@ -13,14 +13,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Billing.init(
             app = "1",
-            api = "https://service.getapp.store",
             context = this,
+            api = "https://service.getapp.store",
         )
 
         Boosty.init(
             app="1",
-            api = "https://service.getapp.store",
             context = this,
+            api = "https://service.getapp.store",
         )
 
         super.onCreate(savedInstanceState)
