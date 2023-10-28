@@ -28,8 +28,73 @@ class Boosty(
     private val client = OkHttpClient()
     private var subscriber: Subscriber? = null
 
+    fun blog(handler: BlogHandler) {
+        val request = Request.Builder()
+            .url("${api}/v1/boosty/${app}/blog")
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                handler.onFailure(e)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!response.isSuccessful) {
+                        handler.onFailure(IOException("Unexpected code $response"))
+                        return
+                    }
+
+                    val body = response.body?.string().orEmpty()
+                    val resp: Blog
+
+                    try {
+                        resp = Gson().fromJson(body, Blog::class.java)
+                    } catch (e: Exception) {
+                        Log.d(TAG, e.message.orEmpty())
+                        handler.onFailure(e)
+                        return
+                    }
+
+                    handler.onSuccess(resp)
+                }
+            }
+        })
+    }
+
+    fun subscriber(external: String, handler: SubscribeHandler) {
+        val request = Request.Builder()
+            .url("${api}/v1/boosty/${app}/subscriber/$external")
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                handler.onFailure(e)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                // 5. подписку сохраняем в праметре subscriber
+                if (!response.isSuccessful) {
+                    return
+                }
+
+                val body = response.body?.string().orEmpty()
+                val resp: Subscriber
+
+                try {
+                    resp = Gson().fromJson(body, Subscriber::class.java)
+                } catch (e: Exception) {
+                    Log.d(TAG, e.message.orEmpty())
+                    handler.onFailure(e)
+                    return
+                }
+
+               handler.onSuccess(resp)
+            }
+        })
+    }
+
     fun subscriptions(handler: SubscriptionsHandler) {
-        // get subscriptions by app
         val request = Request.Builder()
             .url("${api}/v1/boosty/${app}/subscriptions")
             .build()
@@ -62,119 +127,78 @@ class Boosty(
         })
     }
 
-    fun subscribe(handler: SubscribeHandler) {
+    fun subscribe(external: String? = null, handler: SubscribeHandler) {
+        // 0. очищаем все что мы знаем о подписчике
+        subscriber = null
         // 1. получаем ссылку на блог
-        val request = Request.Builder()
-            .url("${api}/v1/boosty/${app}/blog")
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
+        blog(object : BlogHandler {
+            override fun onFailure(e: Throwable) {
                 handler.onFailure(e)
             }
 
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (!response.isSuccessful) {
-                        handler.onFailure(IOException("Unexpected code $response"))
-                        return
+            override fun onSuccess(resp: Blog) {
+                // 2. показываем веб-вью с нужныим блогом
+                (context as Activity).runOnUiThread {
+                    val u = if (external.isNullOrEmpty()) {
+                        resp.url
+                    } else {
+                        "${resp.url}/purchase/$external"
                     }
 
-                    val body = response.body?.string().orEmpty()
-                    val resp: Blog
-
-                    try {
-                        resp = Gson().fromJson(body, Blog::class.java)
-                    } catch (e: Exception) {
-                        Log.d(TAG, e.message.orEmpty())
-                        handler.onFailure(e)
-                        return
-                    }
-
-                    // 2. показываем веб-вью с нужныим блогом
-                    (context as Activity).runOnUiThread {
-                        val dialog = Dialog(context = context, url = resp.url)
-                        dialog.setOnDismissListener {
-                            Log.d(TAG, "call on dismiss")
-                            // 6. при закрытии окна отправляем onSuccess если есть subscriber
-                            if (subscriber == null) {
-                                handler.onFailure(Exception("error on subscribe"))
-                                return@setOnDismissListener
-                            }
-
-                            handler.onSuccess(subscriber!!)
+                    val dialog = Dialog(context = context, url = u)
+                    dialog.setOnDismissListener {
+                        // 5. при закрытии окна отправляем onSuccess если есть subscriber
+                        if (subscriber == null) {
+                            handler.onFailure(Exception("error on subscribe"))
+                            return@setOnDismissListener
                         }
-                        dialog.client = object : WebViewClient() {
-                            override fun shouldInterceptRequest(w: WebView?, request: WebResourceRequest?): WebResourceResponse? {
-                                Log.d(TAG, "shouldInterceptRequest: ${request?.url.toString()}")
-                                Log.d(TAG, "shouldInterceptRequest: ${request?.requestHeaders}")
 
-                                val resp = super.shouldInterceptRequest(w, request)
-                                return resp
+                        handler.onSuccess(subscriber!!)
+                    }
+                    dialog.client = object : WebViewClient() {
+                        override fun shouldInterceptRequest(w: WebView?, request: WebResourceRequest?): WebResourceResponse? {
+                            val resp = super.shouldInterceptRequest(w, request)
+                            return resp
+                        }
+
+                        override fun shouldOverrideUrlLoading(w: WebView, u: String): Boolean {
+                            w.loadUrl(u)
+                            return true
+                        }
+
+                        override fun onPageFinished(w: WebView?, u: String?) {
+                            // убираем попап про скачивание приложения
+                            w?.evaluateJavascript("sessionStorage.setItem(\"preventShowAppBanner\", \"true\");document.querySelectorAll('[ class^=\"NativeAppBanner_root_\" ]')[0].style.display=\"none\";", null);
+
+                            // 3. нагло забираем куки чтоб найти ид подписчика
+                            val cookies = CookieManager.getInstance().getCookie(u) ?: return
+                            // https://stackoverflow.com/questions/11100086/android-extracting-cookies-after-login-in-webview
+
+                            val user = User.parse(cookies)
+
+                            Log.d(TAG, "external: ${user?.external()}")
+
+                            if (user?.external()?.isBlank() == true) {
+                                return
                             }
 
-                            override fun shouldOverrideUrlLoading(w: WebView, u: String): Boolean {
-                                Log.d(TAG, "shouldOverrideUrlLoading: ${u}")
-                                w.loadUrl(u)
-                                return true
-                            }
-
-                            override fun onPageFinished(w: WebView?, u: String?) {
-                                w?.evaluateJavascript("sessionStorage.setItem(\"preventShowAppBanner\", \"true\");document.querySelectorAll('[ class^=\"NativeAppBanner_root_\" ]')[0].style.display=\"none\";", null);
-
-                                // 3. нагло забираем куки чтоб найти ид подписчика
-                                val cookies = CookieManager.getInstance().getCookie(u)
-                                // https://stackoverflow.com/questions/11100086/android-extracting-cookies-after-login-in-webview
-
-                                Log.d(TAG, "onPageFinished: ${u.orEmpty()}")
-                                Log.d(TAG, "cookies: ${cookies.orEmpty()}")
-
-                                if (cookies == null) {
-                                    return
+                            // 4. по полученному ид забирем подписку с бека если она есть. Подписку сохраняем в праметре subscriber
+                            subscriber(user?.external() ?: "", object : SubscribeHandler {
+                                override fun onFailure(e: Throwable) {
+                                    // skip
                                 }
 
-                                val user = BoostyUser.parse(cookies)
-
-                                Log.d(TAG, "external: ${user?.external()}")
-
-                                if (user?.external()?.isBlank() ?: false) {
-                                    return
+                                override fun onSuccess(resp: Subscriber) {
+                                    subscriber = resp
                                 }
 
-                                // 4. по полученому ид забирем подписку с бека если она есть
-                                val request = Request.Builder()
-                                    .url("${api}/v1/boosty/${app}/subscriber/${user?.external()}")
-                                    .build()
-
-                                client.newCall(request).enqueue(object : Callback {
-                                    override fun onFailure(call: Call, e: IOException) {
-                                        // skip
-                                    }
-
-                                    override fun onResponse(call: Call, response: Response) {
-                                        // 5. подписку сохраняем в праметре subscriber
-                                        if (!response.isSuccessful) {
-                                            return
-                                        }
-
-                                        val body = response.body?.string().orEmpty()
-
-                                        try {
-                                            subscriber = Gson().fromJson(body, Subscriber::class.java)
-                                        } catch (e: Exception) {
-                                            Log.d(TAG, e.message.orEmpty())
-                                            return
-                                        }
-
-                                        Log.d(TAG, "subscriber: ${subscriber.toString()}")
-                                    }
-                                })
-                            }
+                            })
                         }
-                        dialog.open()
                     }
+                    dialog.open()
                 }
             }
+
         })
     }
 

@@ -1,9 +1,4 @@
-# Getapp Billing Android SDK
+# Getapp SDK Android
 
-Сервис для оплат в играх и приложениях
-
-## Ссылки
-
-- Json https://gb.ru/posts/android-parsim-json-pravilno и https://github.com/google/gson
-- Okhttp https://github.com/square/okhttp
-- Еще примеры http https://square.github.io/okhttp/recipes/
+Набор библиотек для работы с сервисом [getapp](https://gitflic.ru/project/getapp/getapp-service).
+Сейчас в разработке библиотека для реализации подписок через boosty и оплат через yoomoney

@@ -6,3 +6,8 @@ data class Blog(
     val title: String,
     val url: String
 )
+
+interface BlogHandler {
+    fun onFailure(e: Throwable)
+    fun onSuccess(resp: Blog)
+}

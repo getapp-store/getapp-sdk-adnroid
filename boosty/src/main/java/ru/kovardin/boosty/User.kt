@@ -6,7 +6,9 @@ import com.google.gson.Gson
 import java.net.HttpCookie
 import java.net.URLDecoder
 
-class BoostyUser(val name: String, val avatarUrl: String, val provider: String) {
+const val UserCookieKey = "last_acc"
+
+class User(val name: String, val avatarUrl: String, val provider: String) {
     fun external(): String {
         val u = Uri.parse(avatarUrl)
         if (u.pathSegments.count() > 1) {
@@ -17,20 +19,18 @@ class BoostyUser(val name: String, val avatarUrl: String, val provider: String) 
     }
 
     companion object {
-        fun parse(cookie: String): BoostyUser?  {
+        fun parse(cookie: String): User?  {
             for (cc in cookie.split(";")) {
                 val cookies = HttpCookie.parse(cc)
                 for (c in cookies) {
-                    if (c.name == "last_acc") {
-                        println(URLDecoder.decode(c.value, "UTF-8"))
-
+                    if (c.name == UserCookieKey) {
                         val auth = URLDecoder.decode(c.value, "UTF-8")
-                        var resp: BoostyUser
+                        var resp: User
 
                         try {
-                            resp = Gson().fromJson(auth, BoostyUser::class.java)
+                            resp = Gson().fromJson(auth, User::class.java)
                         } catch (e: Exception) {
-                            Log.e("Billing", e.message.orEmpty())
+                            Log.e("User", e.message.orEmpty())
                             return null
                         }
 

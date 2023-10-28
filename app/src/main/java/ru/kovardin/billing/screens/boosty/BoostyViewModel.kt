@@ -30,8 +30,8 @@ class BoostyViewModel: ViewModel() {
         })
     }
 
-    fun subscribe(context: Context) {
-        Boosty.client.subscribe(object : SubscribeHandler {
+    fun subscribe(context: Context, external: String? = null) {
+        Boosty.client.subscribe(external, object : SubscribeHandler {
             override fun onFailure(e: Throwable) {
                 Log.e("BoostyViewModel", "error on subscriber ${e.message}")
             }

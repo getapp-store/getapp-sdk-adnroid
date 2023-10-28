@@ -39,12 +39,18 @@ fun BoostyScreen(model: BoostyViewModel, nav: NavHostController) {
                 Text(subscription.title + ": ")
                 Text(subscription.amount.toString())
                 Button(onClick = {
-                    model.subscribe(context)
+                    model.subscribe(context, subscription.external)
                 }) {
                     Text(text = "Subscribe")
                 }
             }
             Divider()
+        }
+
+        Button(onClick = {
+            model.subscribe(context)
+        }) {
+            Text(text = "Subscribe")
         }
     }
 }
