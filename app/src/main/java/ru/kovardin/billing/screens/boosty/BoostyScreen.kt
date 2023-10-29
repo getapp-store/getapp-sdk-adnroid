@@ -30,27 +30,31 @@ fun BoostyScreen(model: BoostyViewModel, nav: NavHostController) {
     Column {
         Text("Boosty")
 
-        model.subscriptions.forEach { subscription ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(subscription.title + ": ")
-                Text(subscription.amount.toString())
-                Button(onClick = {
-                    model.subscribe(context, subscription.external)
-                }) {
-                    Text(text = "Subscribe")
+        if (model.subscribed.value) {
+            Text("Спасибо за подписку!")
+        } else {
+            model.subscriptions.forEach { subscription ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(subscription.title + ": ")
+                    Text(subscription.amount.toString())
+                    Button(onClick = {
+                        model.subscribe(context, subscription.external)
+                    }) {
+                        Text(text = "Subscribe")
+                    }
                 }
+                Divider()
             }
-            Divider()
-        }
 
-        Button(onClick = {
-            model.subscribe(context)
-        }) {
-            Text(text = "Subscribe")
+            Button(onClick = {
+                model.subscribe(context)
+            }) {
+                Text(text = "Subscribe")
+            }
         }
     }
 }
