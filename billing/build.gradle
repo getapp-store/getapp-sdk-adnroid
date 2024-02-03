@@ -36,15 +36,22 @@ publishing {
         release(MavenPublication) {
             groupId = 'ru.kovardin'
             artifactId = 'billing'
-            version = '0.1'
+            version = '0.1.0'
 
             afterEvaluate {
                 from components.release
             }
         }
     }
+
+    //  ./gradlew billing:publishReleaseToGetappRepository
     repositories {
         mavenLocal()
+
+        maven {
+            name = "getapp"
+            url = uri("${project.buildDir}/repo")
+        }
     }
 }
 

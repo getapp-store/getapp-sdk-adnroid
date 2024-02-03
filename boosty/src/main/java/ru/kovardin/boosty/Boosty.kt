@@ -207,8 +207,8 @@ class Boosty(
         lateinit var client: Boosty
 
         fun init(
-            app: String,
             context: Context,
+            app: String,
             api: String = "https://service.getapp.store",
         ) {
             client = Boosty(app = app, api = api, context = context)
