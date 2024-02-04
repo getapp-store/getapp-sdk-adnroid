@@ -258,9 +258,9 @@ class Billing(
         lateinit var client: Billing
 
         fun init(
+            context: Context,
             app: String,
             api: String = "https://service.getapp.store",
-            context: Context,
         ) {
             client = Billing(app = app, api = api, context = context)
         }

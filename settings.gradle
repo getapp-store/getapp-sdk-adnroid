@@ -10,10 +10,14 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+//        maven {
+//            url = uri("https://repo.getapp.store")
+//        }
     }
 }
 rootProject.name = "getapp-sdk"
 include ':app'
 include ':billing'
 include ':boosty'
+include ':mediation'
 include ':utils'

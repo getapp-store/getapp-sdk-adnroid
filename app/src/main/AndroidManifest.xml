@@ -14,7 +14,7 @@
         android:theme="@style/Theme.Sdk"
         tools:targetApi="31">
         <activity
-            android:name="ru.kovardin.billing.MainActivity"
+            android:name="ru.kovardin.example.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Sdk">
