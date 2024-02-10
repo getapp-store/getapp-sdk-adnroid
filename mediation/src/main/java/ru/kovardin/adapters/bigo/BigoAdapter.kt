@@ -2,6 +2,7 @@ package ru.kovardin.adapters.bigo
 
 import android.content.Context
 import android.util.Log
+import ru.kovardin.mediation.interfaces.BannerAdapter
 import ru.kovardin.mediation.interfaces.MediationAdapter
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
 import ru.kovardin.mediation.interfaces.InterstitialCallbacks
@@ -35,5 +36,9 @@ class BigoAdapter : MediationAdapter {
         callbacks: InterstitialCallbacks
     ): InterstitialAdapter {
         return BigoInterstitialAdapter(placement = placement, unit = unit, callbacks = callbacks)
+    }
+
+    override fun createBanner(placement: Int, unit: String, callbacks: BannerAdapter): BannerAdapter {
+        TODO("Not yet implemented")
     }
 }

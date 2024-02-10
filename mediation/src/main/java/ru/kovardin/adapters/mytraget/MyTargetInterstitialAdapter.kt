@@ -5,7 +5,6 @@ import android.content.Context
 import android.util.Log
 import com.my.target.ads.InterstitialAd
 import com.my.target.ads.InterstitialAd.InterstitialAdListener
-import com.my.target.common.MyTargetManager
 import com.my.target.common.models.IAdLoadingError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -71,12 +70,15 @@ class MyTargetInterstitialAdapter(
             }
 
             override fun onNoAd(reason: IAdLoadingError, ad: InterstitialAd) {
-                Log.e(tag, reason.message)
-                callbacks.onFailure(reason.message)
+                callbacks.onNoAd(this@MyTargetInterstitialAdapter, reason.message)
             }
 
-            override fun onClick(ad: InterstitialAd) {}
+            override fun onClick(ad: InterstitialAd) {
+                callbacks.onClick(this@MyTargetInterstitialAdapter)
+            }
             override fun onDisplay(ad: InterstitialAd) {
+                callbacks.onOpen(this@MyTargetInterstitialAdapter)
+
                 scope.launch {
                     impressions.impression(
                         placement = placement,
@@ -100,7 +102,9 @@ class MyTargetInterstitialAdapter(
                 callbacks.onImpression(this@MyTargetInterstitialAdapter, "")
             }
 
-            override fun onDismiss(ad: InterstitialAd) {}
+            override fun onDismiss(ad: InterstitialAd) {
+                callbacks.onClose(this@MyTargetInterstitialAdapter)
+            }
             override fun onVideoCompleted(ad: InterstitialAd) {}
         })
 

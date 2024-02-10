@@ -34,17 +34,3 @@ tasks:
   upload-boosty:
     cmds:
       - scp -r ./boosty/build/repo/ru/ getapp.store:/var/www/repo.getapp.store/www/public/
-
-  upload-billing:
-    cmds:
-      - scp -r ./billing/build/repo/ru/ getapp.store:/var/www/repo.getapp.store/www/public/
-
-  upload-mediation:
-    deps:
-      - publish
-    cmds:
-      - scp -r ./mediation/build/repo/ru/ getapp.store:/var/www/repo.getapp.store/www/public/
-
-  upload-boosty:
-    cmds:
-      - scp -r ./boosty/build/repo/ru/ getapp.store:/var/www/repo.getapp.store/www/public/

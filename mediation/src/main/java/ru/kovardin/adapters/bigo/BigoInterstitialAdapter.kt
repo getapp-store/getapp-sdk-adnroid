@@ -53,13 +53,13 @@ class BigoInterstitialAdapter(
             .withExt(ext.toString())
             .withAdLoadListener(object : AdLoadListener<InterstitialAd> {
                 override fun onError(err: AdError) {
-                    callbacks.onFailure(err.message)
+                    callbacks.onFailure(this@BigoInterstitialAdapter, err.message)
                 }
 
                 override fun onAdLoaded(ad: InterstitialAd) {
                     ad.setAdInteractionListener(object : AdInteractionListener {
                         override fun onAdError(error: AdError) {
-                            Log.e(tag, error.message)
+                            callbacks.onNoAd(this@BigoInterstitialAdapter, error.message)
                         }
 
                         override fun onAdImpression() {
@@ -82,18 +82,20 @@ class BigoInterstitialAdapter(
                                     }
                                 )
                             }
+
+                            callbacks.onImpression(this@BigoInterstitialAdapter, "")
                         }
 
                         override fun onAdClicked() {
-                            // When the user clicks on the ad.
+                            callbacks.onClick(this@BigoInterstitialAdapter)
                         }
 
                         override fun onAdOpened() {
-                            // When the fullsceen ad covers the screen.
+                            callbacks.onOpen(this@BigoInterstitialAdapter)
                         }
 
                         override fun onAdClosed() {
-                            // When the fullsceen ad closes.
+                            callbacks.onClose(this@BigoInterstitialAdapter)
                         }
                     })
 

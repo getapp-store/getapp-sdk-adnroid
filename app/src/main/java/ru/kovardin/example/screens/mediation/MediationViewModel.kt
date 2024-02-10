@@ -16,14 +16,30 @@ class MediationViewModel : ViewModel() {
         interstitial = Interstitial()
         interstitial?.init("1", callbacks = object : InterstitialCallbacks {
             override fun onLoad(ad: InterstitialAdapter) {
-                Log.d(tag, "on load")
+                Log.d(tag, "onLoad: $ad")
             }
 
             override fun onImpression(ad: InterstitialAdapter, data: String) {
-                Log.d(tag, data)
+                Log.d(tag, "onImpression: $ad, $data")
             }
 
-            override fun onFailure(message: String) {
+            override fun onClick(ad: InterstitialAdapter) {
+                Log.d(tag, "onClick: $ad")
+            }
+
+            override fun onClose(ad: InterstitialAdapter) {
+                Log.d(tag, "onClose: $ad")
+            }
+
+            override fun onNoAd(ad: InterstitialAdapter, reason: String) {
+                Log.d(tag, "no ad")
+            }
+
+            override fun onOpen(ad: InterstitialAdapter) {
+                Log.d(tag, "onOpen: $ad")
+            }
+
+            override fun onFailure(ad: InterstitialAdapter?, message: String) {
                 Log.e(tag, message)
             }
         })

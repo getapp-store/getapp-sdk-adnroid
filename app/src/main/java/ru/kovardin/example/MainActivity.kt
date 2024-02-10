@@ -1,7 +1,6 @@
 package ru.kovardin.example
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
@@ -13,10 +12,7 @@ import ru.kovardin.adapters.yandex.YandexAdsAdapter
 import ru.kovardin.example.ui.theme.BillingTheme
 import ru.kovardin.boosty.Boosty
 import ru.kovardin.getappbilling.Billing
-import ru.kovardin.mediation.Interstitial
 import ru.kovardin.mediation.Mediation
-import ru.kovardin.mediation.interfaces.InterstitialAdapter
-import ru.kovardin.mediation.interfaces.InterstitialCallbacks
 
 class MainActivity : ComponentActivity() {
     val tag = "MainActivity"
@@ -32,24 +28,6 @@ class MainActivity : ComponentActivity() {
                 "bigo" to BigoAdapter(),
             ),
         )
-
-        val interstitial = Interstitial()
-
-        // "1" - placement id
-        interstitial.init("1", callbacks = object : InterstitialCallbacks {
-            override fun onLoad(ad: InterstitialAdapter) {
-                Log.d(tag, "on load")
-            }
-
-            override fun onImpression(ad: InterstitialAdapter, data: String) {
-                Log.d(tag, data)
-            }
-
-            override fun onFailure(message: String) {
-                Log.e(tag, message)
-            }
-
-        })
 
         Billing.init(
             context = this,

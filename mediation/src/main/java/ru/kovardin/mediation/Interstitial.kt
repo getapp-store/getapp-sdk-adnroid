@@ -60,12 +60,28 @@ class Interstitial {
                                 callbacks.onLoad(ad)
                             }
 
+                            override fun onNoAd(ad: InterstitialAdapter, reason: String) {
+                                callbacks.onNoAd(ad, reason)
+                            }
+
+                            override fun onOpen(ad: InterstitialAdapter) {
+                                callbacks.onOpen(ad)
+                            }
+
                             override fun onImpression(ad: InterstitialAdapter, data: String) {
                                 callbacks.onImpression(ad, data)
                             }
 
-                            override fun onFailure(message: String) {
-                                callbacks.onFailure(message)
+                            override fun onClick(ad: InterstitialAdapter) {
+                                callbacks.onClick(ad)
+                            }
+
+                            override fun onClose(ad: InterstitialAdapter) {
+                                callbacks.onClose(ad)
+                            }
+
+                            override fun onFailure(ad: InterstitialAdapter?, message: String) {
+                                callbacks.onFailure(ad, message)
                             }
                         }).load(context)
                     }

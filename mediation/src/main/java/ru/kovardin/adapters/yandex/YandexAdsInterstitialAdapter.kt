@@ -72,31 +72,29 @@ class YandexAdsInterstitialAdapter(
 
                     ad.setAdEventListener(object : InterstitialAdEventListener {
                         override fun onAdShown() {
-                            // Called when ad is shown.
+                            callbacks.onOpen(this@YandexAdsInterstitialAdapter)
                         }
 
                         override fun onAdFailedToShow(adError: AdError) {
-                            // Called when an InterstitialAd failed to show.
-                            // Clean resources after Ad dismissed
                             interstitial?.setAdEventListener(null)
                             interstitial = null
 
-                            // Now you can preload the next interstitial ad.
+                            callbacks.onFailure(this@YandexAdsInterstitialAdapter, adError.description)
+
                             this@YandexAdsInterstitialAdapter.load(context)
                         }
 
                         override fun onAdDismissed() {
-                            // Called when ad is dismissed.
-                            // Clean resources after Ad dismissed
                             interstitial?.setAdEventListener(null)
                             interstitial = null
 
-                            // Now you can preload the next interstitial ad.
+                            callbacks.onClose(this@YandexAdsInterstitialAdapter)
+
                             this@YandexAdsInterstitialAdapter.load(context)
                         }
 
                         override fun onAdClicked() {
-                            // Called when a click is recorded for an ad.
+                            callbacks.onClick(this@YandexAdsInterstitialAdapter)
                         }
 
                         override fun onAdImpression(data: ImpressionData?) {
@@ -131,7 +129,7 @@ class YandexAdsInterstitialAdapter(
                 override fun onAdFailedToLoad(adRequestError: AdRequestError) {
                     Log.d(tag, adRequestError.description)
 
-                    callbacks.onFailure(adRequestError.description)
+                    callbacks.onNoAd(this@YandexAdsInterstitialAdapter, adRequestError.description)
                 }
             })
         }
