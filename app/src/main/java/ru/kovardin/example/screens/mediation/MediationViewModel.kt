@@ -69,8 +69,6 @@ class MediationViewModel : ViewModel() {
             }
 
         })
-
-//        banner?.load(context)
     }
 
     fun loadBanner(context: Context) {
