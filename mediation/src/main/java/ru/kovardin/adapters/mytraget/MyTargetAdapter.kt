@@ -43,6 +43,11 @@ class MyTargetAdapter : MediationAdapter {
         unit: String,
         callbacks: BannerlCallbacks,
     ): BannerAdapter {
-        TODO("Not yet implemented")
+        return MyTargetBannerAdapter(
+            context = context,
+            placement = placement,
+            unit = unit,
+            callbacks = callbacks,
+        )
     }
 }
