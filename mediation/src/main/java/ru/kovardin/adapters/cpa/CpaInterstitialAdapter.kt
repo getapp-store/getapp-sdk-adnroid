@@ -21,6 +21,7 @@ import ru.kovardin.mediation.services.ImpressionsService
 
 
 class CpaInterstitialAdapter(
+    private val context: Context,
     private val placement: Int,
     private val unit: String,
     private val callbacks: InterstitialCallbacks,
@@ -40,7 +41,7 @@ class CpaInterstitialAdapter(
         return bid
     }
 
-    override fun load(context: Context) {
+    override fun load() {
         auction.bid(placement, BidRequest(
             unit = unit,
             user = User(id = "1")

@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import ru.kovardin.example.screens.boosty.BoostyScreen
 import ru.kovardin.example.screens.boosty.BoostyViewModel
 import ru.kovardin.example.screens.home.HomeScreen
@@ -37,13 +38,15 @@ fun BillingApp(modifier: Modifier = Modifier) {
                 .padding(it),
             color = MaterialTheme.colorScheme.background
         ) {
+            val context = LocalContext.current
+
             val homeViewModel = HomeViewModel()
             val productsViewModel = ProductsViewModel()
             val paymentsViewModel = PaymentsViewModel()
             val boostyViewModel = BoostyViewModel()
             val mediationViewModel = MediationViewModel()
 
-            mediationViewModel.init()
+            mediationViewModel.init(context)
 
             NavHost(navController = nav, startDestination = "home") {
                 composable("home") {

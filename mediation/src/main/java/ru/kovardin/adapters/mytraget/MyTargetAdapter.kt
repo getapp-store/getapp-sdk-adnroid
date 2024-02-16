@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.my.target.common.MyTargetManager
 import ru.kovardin.mediation.interfaces.BannerAdapter
+import ru.kovardin.mediation.interfaces.BannerlCallbacks
 import ru.kovardin.mediation.interfaces.MediationAdapter
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
 import ru.kovardin.mediation.interfaces.InterstitialCallbacks
@@ -23,14 +24,25 @@ class MyTargetAdapter : MediationAdapter {
     }
 
     override fun createInterstitial(
+        context: Context,
         placement: Int,
         unit: String,
         callbacks: InterstitialCallbacks
     ): InterstitialAdapter {
-        return MyTargetInterstitialAdapter(placement = placement, unit = unit, callbacks = callbacks)
+        return MyTargetInterstitialAdapter(
+            context = context,
+            placement = placement,
+            unit = unit,
+            callbacks = callbacks,
+        )
     }
 
-    override fun createBanner(placement: Int, unit: String, callbacks: BannerAdapter): BannerAdapter {
+    override fun createBanner(
+        context: Context,
+        placement: Int,
+        unit: String,
+        callbacks: BannerlCallbacks,
+    ): BannerAdapter {
         TODO("Not yet implemented")
     }
 }

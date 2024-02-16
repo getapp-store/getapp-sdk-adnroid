@@ -7,12 +7,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
 import ru.kovardin.mediation.interfaces.InterstitialCallbacks
 import ru.kovardin.mediation.services.ImpressionHandler
 import ru.kovardin.mediation.services.ImpressionRequest
 import ru.kovardin.mediation.services.ImpressionsService
+import ru.kovardin.mediation.settings.Settings
 import sg.bigo.ads.api.AdBid
 import sg.bigo.ads.api.AdError
 import sg.bigo.ads.api.AdInteractionListener
@@ -23,6 +23,7 @@ import sg.bigo.ads.api.InterstitialAdRequest
 
 
 class BigoInterstitialAdapter(
+    private val context: Context,
     private val placement: Int,
     private val unit: String,
     private val callbacks: InterstitialCallbacks,
@@ -43,11 +44,8 @@ class BigoInterstitialAdapter(
         return price
     }
 
-    override fun load(context: Context) {
-        val ext = JSONObject()
-        ext.putOpt("mediationName", "getapp"); // admob、meta etc.
-        ext.putOpt("mediationVersion", "1.0.0"); // 12.1.0
-        ext.putOpt("adapterVersion", "1.0.0"); // 12.1.0.0
+    override fun load() {
+        val ext = Settings.mediationParam
 
         val loader: InterstitialAdLoader = InterstitialAdLoader.Builder()
             .withExt(ext.toString())

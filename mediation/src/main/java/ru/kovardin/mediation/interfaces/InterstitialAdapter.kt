@@ -5,7 +5,7 @@ import android.content.Context
 
 
 interface InterstitialAdapter {
-    fun load(context: Context)
+    fun load()
     fun show(activity: Activity)
     fun bid(): Double
     fun win(price: Double, bidder: String)

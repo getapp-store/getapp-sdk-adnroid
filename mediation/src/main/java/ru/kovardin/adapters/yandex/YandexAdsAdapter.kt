@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.yandex.mobile.ads.common.MobileAds
 import ru.kovardin.mediation.interfaces.BannerAdapter
+import ru.kovardin.mediation.interfaces.BannerlCallbacks
 import ru.kovardin.mediation.interfaces.MediationAdapter
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
 import ru.kovardin.mediation.interfaces.InterstitialCallbacks
@@ -25,14 +26,30 @@ class YandexAdsAdapter : MediationAdapter {
     }
 
     override fun createInterstitial(
+        context: Context,
         placement: Int,
         unit: String,
         callbacks: InterstitialCallbacks
     ): InterstitialAdapter {
-        return YandexAdsInterstitialAdapter(placement = placement, unit = unit, callbacks = callbacks)
+        return YandexAdsInterstitialAdapter(
+            context = context,
+            placement = placement,
+            unit = unit,
+            callbacks = callbacks,
+        )
     }
 
-    override fun createBanner(placement: Int, unit: String, callbacks: BannerAdapter): BannerAdapter {
-        TODO("Not yet implemented")
+    override fun createBanner(
+        context: Context,
+        placement: Int,
+        unit: String,
+        callbacks: BannerlCallbacks,
+    ): BannerAdapter {
+        return YandexAdsBannerAdapter(
+            context = context,
+            placement = placement,
+            unit = unit,
+            callbacks = callbacks,
+        )
     }
 }

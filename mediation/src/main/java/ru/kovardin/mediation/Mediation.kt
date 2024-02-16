@@ -19,6 +19,7 @@ class Mediation {
 
     var adapters = mapOf<String, MediationAdapter>()
 
+    // TODO нужно добавить callback на инициализацию всех SDK
     private fun init(context: Context, app: String, adapters: Map<String, MediationAdapter>) {
         this.adapters = adapters
 

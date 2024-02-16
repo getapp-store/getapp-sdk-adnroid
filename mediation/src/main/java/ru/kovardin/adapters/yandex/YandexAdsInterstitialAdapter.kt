@@ -28,6 +28,7 @@ import ru.kovardin.mediation.services.ImpressionsService
 
 
 class YandexAdsInterstitialAdapter(
+    private val context: Context,
     private val placement: Int,
     private val unit: String,
     private val callbacks: InterstitialCallbacks,
@@ -50,7 +51,7 @@ class YandexAdsInterstitialAdapter(
         return bid
     }
 
-    override fun load(context: Context) {
+    override fun load() {
         loader = InterstitialAdLoader(context).apply {
             setAdLoadListener(object : InterstitialAdLoadListener {
                 override fun onAdLoaded(ad: InterstitialAd) {
@@ -81,7 +82,7 @@ class YandexAdsInterstitialAdapter(
 
                             callbacks.onFailure(this@YandexAdsInterstitialAdapter, adError.description)
 
-                            this@YandexAdsInterstitialAdapter.load(context)
+                            this@YandexAdsInterstitialAdapter.load()
                         }
 
                         override fun onAdDismissed() {
@@ -90,7 +91,7 @@ class YandexAdsInterstitialAdapter(
 
                             callbacks.onClose(this@YandexAdsInterstitialAdapter)
 
-                            this@YandexAdsInterstitialAdapter.load(context)
+                            this@YandexAdsInterstitialAdapter.load()
                         }
 
                         override fun onAdClicked() {

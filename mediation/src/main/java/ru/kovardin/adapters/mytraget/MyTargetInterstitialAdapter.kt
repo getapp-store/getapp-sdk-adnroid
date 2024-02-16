@@ -23,6 +23,7 @@ import ru.kovardin.mediation.services.ImpressionsService
 
 
 class MyTargetInterstitialAdapter(
+    private val context: Context,
     private val placement: Int,
     private val unit: String,
     private val callbacks: InterstitialCallbacks,
@@ -44,8 +45,7 @@ class MyTargetInterstitialAdapter(
         return bid
     }
 
-    override fun load(context: Context) {
-
+    override fun load() {
         interstitial = InterstitialAd(unit.toInt(), context)
         interstitial?.isMediationEnabled = true
         interstitial?.setListener(object : InterstitialAdListener {

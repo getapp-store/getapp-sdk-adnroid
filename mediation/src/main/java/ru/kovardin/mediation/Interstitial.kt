@@ -14,7 +14,7 @@ import ru.kovardin.mediation.services.PlacementResponse
 import ru.kovardin.mediation.services.PlacementsService
 
 
-class Interstitial {
+class Interstitial(private val id: String, private val callbacks: InterstitialCallbacks) {
     private val lossReasonLowerThanFloorPrice = 100
     private val lossReasonLowerThanHighestPrice = 101
 
@@ -22,17 +22,7 @@ class Interstitial {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val placements = PlacementsService()
-
-    // private var ad: InterstitialAdapter? = null
-    private lateinit var callbacks: InterstitialCallbacks
-    private lateinit var id: String
-
     private var bets = mutableMapOf<String, InterstitialAdapter>()
-
-    fun init(id: String, callbacks: InterstitialCallbacks) {
-        this.callbacks = callbacks
-        this.id = id
-    }
 
     fun load(context: Context) {
         bets.clear()
@@ -53,7 +43,7 @@ class Interstitial {
 
                         val adapter = Mediation.instance.adapters[network] ?: continue
 
-                        adapter.createInterstitial(placement = placement, unit = unit, callbacks = object : InterstitialCallbacks {
+                        adapter.createInterstitial(context = context, placement = placement, unit = unit, callbacks = object : InterstitialCallbacks {
                             override fun onLoad(ad: InterstitialAdapter) {
                                 bets[unit] = ad
 
@@ -83,7 +73,7 @@ class Interstitial {
                             override fun onFailure(ad: InterstitialAdapter?, message: String) {
                                 callbacks.onFailure(ad, message)
                             }
-                        }).load(context)
+                        }).load()
                     }
                 }
 
