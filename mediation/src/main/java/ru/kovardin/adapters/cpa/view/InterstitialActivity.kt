@@ -1,4 +1,4 @@
-package ru.kovardin.adapters.cpa
+package ru.kovardin.adapters.cpa.view
 
 import android.app.Activity
 import android.os.Bundle

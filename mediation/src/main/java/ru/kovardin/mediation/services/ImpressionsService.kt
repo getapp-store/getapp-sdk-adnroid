@@ -17,8 +17,8 @@ interface ImpressionHandler {
 
 data class ImpressionRequest(
     val unit: String,
-    val data: String,
     val revenue: Double,
+    val data: String,
 )
 
 class ImpressionsService {

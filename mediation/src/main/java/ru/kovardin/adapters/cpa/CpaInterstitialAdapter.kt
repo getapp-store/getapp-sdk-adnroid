@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import ru.kovardin.adapters.cpa.view.InterstitialActivity
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
 import ru.kovardin.mediation.interfaces.InterstitialCallbacks
 import ru.kovardin.mediation.models.User
@@ -56,17 +57,13 @@ class CpaInterstitialAdapter(
             }
         })
 
-        // load price from server
         Log.i(tag, "load cpa banner")
 
-        // get ad from server
         callbacks.onLoad(this@CpaInterstitialAdapter)
     }
 
     override fun show(activity: Activity) {
-        // start your activity by passing the intent
         activity.startActivity(Intent(activity, InterstitialActivity::class.java).apply {
-            // you can add values(if any) to pass to the next class or avoid using `.apply`
             putExtra("keyIdentifier", "")
         })
 
@@ -75,8 +72,8 @@ class CpaInterstitialAdapter(
                 placement = placement,
                 data = ImpressionRequest(
                     unit = unit,
-                    data = "",
-                    revenue = cpm / 1000
+                    revenue = cpm / 1000,
+                    data = ""
                 ),
                 callback = object : ImpressionHandler {
                     override fun onFailure(e: Throwable) {

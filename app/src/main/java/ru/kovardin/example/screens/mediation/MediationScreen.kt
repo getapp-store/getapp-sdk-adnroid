@@ -31,7 +31,7 @@ fun MediationScreen(model: MediationViewModel, nav: NavHostController) {
             model.loadInterstitial(context)
             model.loadBanner(context)
         }) {
-            Text(text = "reload")
+            Text(text = "load")
         }
 
         OutlinedButton(onClick = {
@@ -59,7 +59,7 @@ fun BannerView(model: MediationViewModel) {
             .height(100.dp)
             .width(300.dp), // Occupy the max size in the Compose UI tree
         factory = { context ->
-            model.showBanner(context) ?: TextView(context)
+            model.showBanner(context)
         },
         update = { view ->
 

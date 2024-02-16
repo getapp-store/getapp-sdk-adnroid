@@ -71,8 +71,8 @@ class BigoBannerAdapter(
                                 placement = placement,
                                 data = ImpressionRequest(
                                     unit = unit,
-                                    data = "",
-                                    revenue = (bid?.price ?: 0.0) / 1000 // цена одного показа
+                                    revenue = (bid?.price ?: 0.0) / 1000, // цена одного показа
+                                    data = ""
                                 ),
                                 callback = object : ImpressionHandler {
                                     override fun onFailure(e: Throwable) {

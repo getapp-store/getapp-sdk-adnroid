@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application>
         <activity
-            android:name="ru.kovardin.adapters.cpa.InterstitialActivity"
+            android:name="ru.kovardin.adapters.cpa.view.InterstitialActivity"
             android:exported="true">
         </activity>
     </application>

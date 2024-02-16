@@ -46,26 +46,29 @@ class MediationViewModel : ViewModel() {
             }
 
             override fun onFailure(ad: InterstitialAdapter?, message: String) {
-                Log.e(tag, message)
+                Log.e(tag, "onFailure $message")
             }
         })
 
-//        interstitial?.load(context)
-
         banner = Banner("2", callbacks = object : BannerlCallbacks{
             override fun onLoad(ad: BannerAdapter) {
+                Log.d(tag, "onLoad: $ad")
             }
 
             override fun onNoAd(ad: BannerAdapter, reason: String) {
+                Log.d(tag, "no ad")
             }
 
             override fun onImpression(ad: BannerAdapter, data: String) {
+                Log.d(tag, "onImpression: $ad, $data")
             }
 
             override fun onClick(ad: BannerAdapter) {
+                Log.d(tag, "onClick: $ad")
             }
 
             override fun onFailure(ad: BannerAdapter?, message: String) {
+                Log.e(tag, "onFailure $message")
             }
 
         })

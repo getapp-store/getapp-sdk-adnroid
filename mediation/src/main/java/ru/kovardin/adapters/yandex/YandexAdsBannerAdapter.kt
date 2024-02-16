@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import ru.kovardin.adapters.yandex.utils.revenue
 import ru.kovardin.mediation.interfaces.BannerAdapter
 import ru.kovardin.mediation.interfaces.BannerlCallbacks
 import ru.kovardin.mediation.models.User
@@ -88,8 +89,8 @@ class YandexAdsBannerAdapter(
                         placement = placement,
                         data = ImpressionRequest(
                             unit = unit,
-                            data = data?.rawData.orEmpty(),
-                            revenue = cpm / 1000
+                            revenue = data?.revenue() ?: 0.0,
+                            data = data?.rawData ?: "",
                         ),
                         callback = object : ImpressionHandler {
                             override fun onFailure(e: Throwable) {

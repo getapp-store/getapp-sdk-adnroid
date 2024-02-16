@@ -47,7 +47,7 @@ class MyTargetBannerAdapter(
         banner.setRefreshAd(false)
         banner.setSlotId(unit.toInt())
         banner.listener = object : MyTargetView.MyTargetViewListener {
-            override fun onLoad(p0: MyTargetView) {
+            override fun onLoad(v: MyTargetView) {
                 scope.launch {
                     auction.bid(placement, BidRequest(
                         unit = unit,
@@ -77,8 +77,8 @@ class MyTargetBannerAdapter(
                         placement = placement,
                         data = ImpressionRequest(
                             unit = unit,
+                            revenue = cpm / 1000,
                             data = "",
-                            revenue = cpm / 1000
                         ),
                         callback = object : ImpressionHandler {
                             override fun onFailure(e: Throwable) {

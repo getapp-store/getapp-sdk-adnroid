@@ -84,8 +84,8 @@ class MyTargetInterstitialAdapter(
                         placement = placement,
                         data = ImpressionRequest(
                             unit = unit,
+                            revenue = cpm / 1000,
                             data = "",
-                            revenue = cpm / 1000
                         ),
                         callback = object : ImpressionHandler {
                             override fun onFailure(e: Throwable) {
