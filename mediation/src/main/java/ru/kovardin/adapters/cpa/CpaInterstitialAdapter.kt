@@ -67,12 +67,14 @@ class CpaInterstitialAdapter(
             putExtra("keyIdentifier", "")
         })
 
+        val revenue = cpm / 1000
+
         scope.launch {
             impressions.impression(
                 placement = placement,
                 data = ImpressionRequest(
                     unit = unit,
-                    revenue = cpm / 1000,
+                    revenue = revenue,
                     data = ""
                 ),
                 callback = object : ImpressionHandler {
@@ -87,7 +89,11 @@ class CpaInterstitialAdapter(
             )
         }
 
-        callbacks.onImpression(this, "")
+        callbacks.onImpression(
+            this,
+            revenue = revenue,
+            data = "",
+        )
     }
 
 

@@ -58,8 +58,8 @@ class Interstitial(private val id: String, private val callbacks: InterstitialCa
                                 callbacks.onOpen(ad)
                             }
 
-                            override fun onImpression(ad: InterstitialAdapter, data: String) {
-                                callbacks.onImpression(ad, data)
+                            override fun onImpression(ad: InterstitialAdapter, revenue: Double, data: String) {
+                                callbacks.onImpression(ad, revenue, data)
                             }
 
                             override fun onClick(ad: InterstitialAdapter) {

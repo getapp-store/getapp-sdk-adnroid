@@ -54,8 +54,8 @@ class Banner(private val id: String, private val callbacks: BannerlCallbacks) {
                                 callbacks.onNoAd(ad, reason)
                             }
 
-                            override fun onImpression(ad: BannerAdapter, data: String) {
-                                callbacks.onImpression(ad, data)
+                            override fun onImpression(ad: BannerAdapter, revenue: Double, data: String) {
+                                callbacks.onImpression(ad, revenue, data)
                             }
 
                             override fun onClick(ad: BannerAdapter) {
