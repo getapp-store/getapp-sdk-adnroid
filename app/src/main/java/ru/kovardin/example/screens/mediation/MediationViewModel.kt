@@ -5,18 +5,23 @@ import android.content.Context
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import ru.kovardin.mediation.Banner
 import ru.kovardin.mediation.Interstitial
+import ru.kovardin.mediation.Rewarded
 import ru.kovardin.mediation.interfaces.BannerAdapter
 import ru.kovardin.mediation.interfaces.BannerlCallbacks
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
 import ru.kovardin.mediation.interfaces.InterstitialCallbacks
+import ru.kovardin.mediation.interfaces.RewardedAdapter
+import ru.kovardin.mediation.interfaces.RewardedCallbacks
 
 class MediationViewModel : ViewModel() {
 
     private val tag = "MediationViewModel"
     private var interstitial: Interstitial? = null
+    private var rewarded: Rewarded? = null
     private var banner: Banner? = null
 
     fun init(context: Context) {
@@ -47,6 +52,41 @@ class MediationViewModel : ViewModel() {
 
             override fun onFailure(ad: InterstitialAdapter?, message: String) {
                 Log.e(tag, "interstitial onFailure $message")
+            }
+        })
+
+        rewarded = Rewarded( "3", callbacks = object : RewardedCallbacks {
+            override fun onLoad(ad: RewardedAdapter) {
+                Log.d(tag, "rewarded onLoad: $ad")
+            }
+
+            override fun onImpression(ad: RewardedAdapter, revenue: Double,  data: String) {
+                Log.d(tag, "rewarded onImpression: $ad, $revenue, $data")
+            }
+
+            override fun onClick(ad: RewardedAdapter) {
+                Log.d(tag, "rewarded onClick: $ad")
+            }
+
+            override fun onClose(ad: RewardedAdapter) {
+                Log.d(tag, "rewarded onClose: $ad")
+            }
+
+            override fun onReward(ad: RewardedAdapter, amount: Int, type: String) {
+                Toast.makeText(context, "rewarded: $amount, $type", Toast.LENGTH_SHORT).show()
+                Log.d(tag, "rewarded onReward $amount, $type")
+            }
+
+            override fun onNoAd(ad: RewardedAdapter, reason: String) {
+                Log.d(tag, "rewarded onNoAd")
+            }
+
+            override fun onOpen(ad: RewardedAdapter) {
+                Log.d(tag, "rewarded onOpen: $ad")
+            }
+
+            override fun onFailure(ad: RewardedAdapter?, message: String) {
+                Log.e(tag, "rewarded onFailure $message")
             }
         })
 
@@ -88,5 +128,13 @@ class MediationViewModel : ViewModel() {
 
     fun showInterstitial(context: Activity) {
         interstitial?.show(context)
+    }
+
+    fun loadRewarded(context: Context) {
+        rewarded?.load(context)
+    }
+
+    fun showRewarded(context: Activity) {
+        rewarded?.show(context)
     }
 }

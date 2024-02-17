@@ -8,6 +8,8 @@ import ru.kovardin.mediation.interfaces.BannerlCallbacks
 import ru.kovardin.mediation.interfaces.MediationAdapter
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
 import ru.kovardin.mediation.interfaces.InterstitialCallbacks
+import ru.kovardin.mediation.interfaces.RewardedAdapter
+import ru.kovardin.mediation.interfaces.RewardedCallbacks
 
 
 class YandexAdsAdapter : MediationAdapter {
@@ -19,10 +21,6 @@ class YandexAdsAdapter : MediationAdapter {
         MobileAds.initialize(context) {
 
         }
-    }
-
-    override fun token(context: Context): String {
-        return ""
     }
 
     override fun createInterstitial(
@@ -46,6 +44,20 @@ class YandexAdsAdapter : MediationAdapter {
         callbacks: BannerlCallbacks,
     ): BannerAdapter {
         return YandexAdsBannerAdapter(
+            context = context,
+            placement = placement,
+            unit = unit,
+            callbacks = callbacks,
+        )
+    }
+
+    override fun createRewarded(
+        context: Context,
+        placement: Int,
+        unit: String,
+        callbacks: RewardedCallbacks,
+    ): RewardedAdapter {
+        return YandexAdsRewardedAdapter(
             context = context,
             placement = placement,
             unit = unit,

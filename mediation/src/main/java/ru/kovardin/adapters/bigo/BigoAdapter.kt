@@ -7,6 +7,8 @@ import ru.kovardin.mediation.interfaces.BannerlCallbacks
 import ru.kovardin.mediation.interfaces.MediationAdapter
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
 import ru.kovardin.mediation.interfaces.InterstitialCallbacks
+import ru.kovardin.mediation.interfaces.RewardedAdapter
+import ru.kovardin.mediation.interfaces.RewardedCallbacks
 import sg.bigo.ads.BigoAdSdk
 import sg.bigo.ads.api.AdConfig
 
@@ -25,10 +27,6 @@ class BigoAdapter : MediationAdapter {
         BigoAdSdk.initialize(context, config) {
             Log.i(tag, "initialized")
         }
-    }
-
-    override fun token(context: Context): String {
-        return ""
     }
 
     override fun createInterstitial(
@@ -53,6 +51,21 @@ class BigoAdapter : MediationAdapter {
         callbacks: BannerlCallbacks,
     ): BannerAdapter {
         return BigoBannerAdapter(
+            context = context,
+            placement = placement,
+            unit = unit,
+            callbacks = callbacks,
+        )
+    }
+
+    override fun createRewarded(
+        context: Context,
+        placement: Int,
+        unit: String,
+        callbacks:
+        RewardedCallbacks,
+    ): RewardedAdapter {
+        return BigoRewardedAdapter(
             context = context,
             placement = placement,
             unit = unit,

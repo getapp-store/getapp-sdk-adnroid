@@ -1,21 +1,17 @@
-package ru.kovardin.adapters.yandex
+package ru.kovardin.adapters.mytraget
 
+import android.app.Activity
 import android.content.Context
 import android.util.Log
-import android.view.View
-import com.yandex.mobile.ads.banner.BannerAdEventListener
-import com.yandex.mobile.ads.banner.BannerAdSize
-import com.yandex.mobile.ads.banner.BannerAdView
-import com.yandex.mobile.ads.common.AdRequest
-import com.yandex.mobile.ads.common.AdRequestError
-import com.yandex.mobile.ads.common.ImpressionData
+import com.my.target.ads.Reward
+import com.my.target.ads.RewardedAd
+import com.my.target.common.models.IAdLoadingError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import ru.kovardin.adapters.yandex.utils.revenue
-import ru.kovardin.mediation.interfaces.BannerAdapter
-import ru.kovardin.mediation.interfaces.BannerlCallbacks
+import ru.kovardin.mediation.interfaces.RewardedAdapter
+import ru.kovardin.mediation.interfaces.RewardedCallbacks
 import ru.kovardin.mediation.models.User
 import ru.kovardin.mediation.services.AuctionService
 import ru.kovardin.mediation.services.BidHandler
@@ -25,33 +21,33 @@ import ru.kovardin.mediation.services.ImpressionHandler
 import ru.kovardin.mediation.services.ImpressionRequest
 import ru.kovardin.mediation.services.ImpressionsService
 
-class YandexAdsBannerAdapter(
+class MyTargetRewardedAdapter(
     private val context: Context,
     private val placement: Int,
     private val unit: String,
-    private val callbacks: BannerlCallbacks,
-) : BannerAdapter {
-    private val tag = "YandexAdsInterstitialAdapter"
-    private val network = "yandex"
-
-    private val banner = BannerAdView(context)
+    private val callbacks: RewardedCallbacks,
+) : RewardedAdapter {
+    private val tag = "MyTargetRewardedAdapter"
+    private val network = "mytarget"
 
     private var cpm: Double = 0.0
     private var bid: Double = 0.0
+
+    private var rewarded: RewardedAd? = null
 
     private val auction = AuctionService()
     private val impressions = ImpressionsService()
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     override fun bid(): Double {
         return bid
     }
-
     override fun load() {
-        banner.setAdSize(BannerAdSize.inlineSize(context, 300, 100))
-        banner.setAdUnitId(unit)
-        banner.setBannerAdEventListener(object : BannerAdEventListener {
-            override fun onAdLoaded() {
+        rewarded = RewardedAd(unit.toInt(), context)
+        rewarded?.isMediationEnabled = true
+        rewarded?.setListener(object : RewardedAd.RewardedAdListener {
+            override fun onLoad(ad: RewardedAd) {
                 scope.launch {
                     auction.bid(placement, BidRequest(
                         unit = unit,
@@ -68,22 +64,20 @@ class YandexAdsBannerAdapter(
                     })
                 }
 
-                callbacks.onLoad(this@YandexAdsBannerAdapter)
+                callbacks.onLoad(this@MyTargetRewardedAdapter)
             }
 
-            override fun onAdFailedToLoad(err: AdRequestError) {
-                callbacks.onNoAd(this@YandexAdsBannerAdapter, err.description)
+            override fun onNoAd(reason: IAdLoadingError, ad: RewardedAd) {
+                callbacks.onNoAd(this@MyTargetRewardedAdapter, reason.message)
             }
 
-            override fun onAdClicked() {
-                callbacks.onClick(this@YandexAdsBannerAdapter)
+            override fun onClick(ad: RewardedAd) {
+                callbacks.onClick(this@MyTargetRewardedAdapter)
             }
 
-            override fun onLeftApplication() {}
+            override fun onDisplay(ad: RewardedAd) {
+                callbacks.onOpen(this@MyTargetRewardedAdapter)
 
-            override fun onReturnedToApplication() {}
-
-            override fun onImpression(data: ImpressionData?) {
                 val revenue = cpm / 1000
 
                 scope.launch {
@@ -91,8 +85,8 @@ class YandexAdsBannerAdapter(
                         placement = placement,
                         data = ImpressionRequest(
                             unit = unit,
-                            revenue = data?.revenue() ?: revenue,
-                            data = data?.rawData ?: "",
+                            revenue = revenue,
+                            data = "",
                         ),
                         callback = object : ImpressionHandler {
                             override fun onFailure(e: Throwable) {
@@ -107,18 +101,26 @@ class YandexAdsBannerAdapter(
                 }
 
                 callbacks.onImpression(
-                    this@YandexAdsBannerAdapter,
-                    revenue = data?.revenue() ?: 0.0,
-                    data = data?.rawData ?: "",
+                    this@MyTargetRewardedAdapter,
+                    revenue = revenue,
+                    data = "",
                 )
+            }
+
+            override fun onDismiss(ad: RewardedAd) {
+                callbacks.onClose(this@MyTargetRewardedAdapter)
+            }
+
+            override fun onReward(r: Reward, ad: RewardedAd) {
+                callbacks.onReward(this@MyTargetRewardedAdapter, 0, r.type)
             }
         })
 
-        banner.loadAd(AdRequest.Builder().build())
+        rewarded?.load()
     }
 
-    override fun view(context: Context): View {
-        return banner
+    override fun show(activity: Activity) {
+        rewarded?.show();
     }
 
     override fun win(price: Double, bidder: String) {

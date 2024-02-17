@@ -5,7 +5,7 @@ import android.content.Context
 
 interface MediationAdapter {
     fun init(context: Context, key: String)
-    fun token(context: Context): String
+
     fun createInterstitial(
         context: Context,
         placement: Int,
@@ -19,4 +19,11 @@ interface MediationAdapter {
         unit: String,
         callbacks: BannerlCallbacks,
     ): BannerAdapter
+
+    fun createRewarded(
+        context: Context,
+        placement: Int,
+        unit: String,
+        callbacks: RewardedCallbacks,
+    ): RewardedAdapter
 }

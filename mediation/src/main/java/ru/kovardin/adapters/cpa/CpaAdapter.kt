@@ -7,6 +7,8 @@ import ru.kovardin.mediation.interfaces.BannerlCallbacks
 import ru.kovardin.mediation.interfaces.MediationAdapter
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
 import ru.kovardin.mediation.interfaces.InterstitialCallbacks
+import ru.kovardin.mediation.interfaces.RewardedAdapter
+import ru.kovardin.mediation.interfaces.RewardedCallbacks
 
 
 class CpaAdapter : MediationAdapter {
@@ -14,10 +16,6 @@ class CpaAdapter : MediationAdapter {
 
     override fun init(context: Context, key: String) {
         Log.d(tag, "init cpa adapter")
-    }
-
-    override fun token(context: Context): String {
-        return ""
     }
 
     override fun createInterstitial(
@@ -40,6 +38,15 @@ class CpaAdapter : MediationAdapter {
         unit: String,
         callbacks: BannerlCallbacks,
     ): BannerAdapter {
+        TODO("Not yet implemented")
+    }
+
+    override fun createRewarded(
+        context: Context,
+        placement: Int,
+        unit: String,
+        callbacks: RewardedCallbacks,
+    ): RewardedAdapter {
         TODO("Not yet implemented")
     }
 }

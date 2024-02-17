@@ -7,17 +7,18 @@ import com.yandex.mobile.ads.common.AdError
 import com.yandex.mobile.ads.common.AdRequestConfiguration
 import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
-import com.yandex.mobile.ads.interstitial.InterstitialAd
-import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
-import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener
-import com.yandex.mobile.ads.interstitial.InterstitialAdLoader
+import com.yandex.mobile.ads.rewarded.Reward
+import com.yandex.mobile.ads.rewarded.RewardedAd
+import com.yandex.mobile.ads.rewarded.RewardedAdEventListener
+import com.yandex.mobile.ads.rewarded.RewardedAdLoadListener
+import com.yandex.mobile.ads.rewarded.RewardedAdLoader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import ru.kovardin.adapters.yandex.utils.revenue
-import ru.kovardin.mediation.interfaces.InterstitialAdapter
-import ru.kovardin.mediation.interfaces.InterstitialCallbacks
+import ru.kovardin.mediation.interfaces.RewardedAdapter
+import ru.kovardin.mediation.interfaces.RewardedCallbacks
 import ru.kovardin.mediation.models.User
 import ru.kovardin.mediation.services.AuctionService
 import ru.kovardin.mediation.services.BidHandler
@@ -27,21 +28,20 @@ import ru.kovardin.mediation.services.ImpressionHandler
 import ru.kovardin.mediation.services.ImpressionRequest
 import ru.kovardin.mediation.services.ImpressionsService
 
-
-class YandexAdsInterstitialAdapter(
+class YandexAdsRewardedAdapter(
     private val context: Context,
     private val placement: Int,
     private val unit: String,
-    private val callbacks: InterstitialCallbacks,
-) : InterstitialAdapter {
-    private val tag = "YandexAdsInterstitialAdapter"
+    private val callbacks: RewardedCallbacks,
+): RewardedAdapter {
+    private val tag = "YandexAdsRewardedAdapter"
     private val network = "yandex"
 
     private var cpm: Double = 0.0
     private var bid: Double = 0.0
 
-    private var interstitial: InterstitialAd? = null
-    private var loader: InterstitialAdLoader? = null
+    private var rewarded: RewardedAd? = null
+    private var loader: RewardedAdLoader? = null
 
     private val auction = AuctionService()
     private val impressions = ImpressionsService()
@@ -53,9 +53,9 @@ class YandexAdsInterstitialAdapter(
     }
 
     override fun load() {
-        loader = InterstitialAdLoader(context).apply {
-            setAdLoadListener(object : InterstitialAdLoadListener {
-                override fun onAdLoaded(ad: InterstitialAd) {
+        loader = RewardedAdLoader(context).apply {
+            setAdLoadListener(object : RewardedAdLoadListener {
+                override fun onAdLoaded(ad: RewardedAd) {
                     scope.launch {
                         auction.bid(placement, BidRequest(
                             unit = unit,
@@ -72,31 +72,31 @@ class YandexAdsInterstitialAdapter(
                         })
                     }
 
-                    ad.setAdEventListener(object : InterstitialAdEventListener {
+                    ad.setAdEventListener(object : RewardedAdEventListener {
                         override fun onAdShown() {
-                            callbacks.onOpen(this@YandexAdsInterstitialAdapter)
+                            callbacks.onOpen(this@YandexAdsRewardedAdapter)
                         }
 
                         override fun onAdFailedToShow(adError: AdError) {
-                            interstitial?.setAdEventListener(null)
-                            interstitial = null
+                            rewarded?.setAdEventListener(null)
+                            rewarded = null
 
-                            callbacks.onFailure(this@YandexAdsInterstitialAdapter, adError.description)
+                            callbacks.onFailure(this@YandexAdsRewardedAdapter, adError.description)
 
-                            this@YandexAdsInterstitialAdapter.load()
+                            this@YandexAdsRewardedAdapter.load()
                         }
 
                         override fun onAdDismissed() {
-                            interstitial?.setAdEventListener(null)
-                            interstitial = null
+                            rewarded?.setAdEventListener(null)
+                            rewarded = null
 
-                            callbacks.onClose(this@YandexAdsInterstitialAdapter)
+                            callbacks.onClose(this@YandexAdsRewardedAdapter)
 
-                            this@YandexAdsInterstitialAdapter.load()
+                            this@YandexAdsRewardedAdapter.load()
                         }
 
                         override fun onAdClicked() {
-                            callbacks.onClick(this@YandexAdsInterstitialAdapter)
+                            callbacks.onClick(this@YandexAdsRewardedAdapter)
                         }
 
                         override fun onAdImpression(data: ImpressionData?) {
@@ -123,21 +123,25 @@ class YandexAdsInterstitialAdapter(
                             }
 
                             callbacks.onImpression(
-                                this@YandexAdsInterstitialAdapter,
+                                this@YandexAdsRewardedAdapter,
                                 revenue = data?.revenue() ?: 0.0,
                                 data = data?.rawData.orEmpty(),
                             )
                         }
+
+                        override fun onRewarded(r: Reward) {
+                            callbacks.onReward(this@YandexAdsRewardedAdapter, r.amount,  r.type)
+                        }
                     })
 
-                    interstitial = ad
-                    callbacks.onLoad(this@YandexAdsInterstitialAdapter)
+                    rewarded = ad
+                    callbacks.onLoad(this@YandexAdsRewardedAdapter)
                 }
 
                 override fun onAdFailedToLoad(adRequestError: AdRequestError) {
                     Log.d(tag, adRequestError.description)
 
-                    callbacks.onNoAd(this@YandexAdsInterstitialAdapter, adRequestError.description)
+                    callbacks.onNoAd(this@YandexAdsRewardedAdapter, adRequestError.description)
                 }
             })
         }
@@ -147,7 +151,7 @@ class YandexAdsInterstitialAdapter(
     }
 
     override fun show(activity: Activity) {
-        interstitial?.show(activity)
+        rewarded?.show(activity)
     }
 
     override fun win(price: Double, bidder: String) {

@@ -29,6 +29,7 @@ fun MediationScreen(model: MediationViewModel, nav: NavHostController) {
     Column {
         OutlinedButton(onClick = {
             model.loadInterstitial(context)
+            model.loadRewarded(context)
             model.loadBanner(context)
         }) {
             Text(text = "load")
@@ -38,6 +39,12 @@ fun MediationScreen(model: MediationViewModel, nav: NavHostController) {
             model.showInterstitial(context)
         }) {
             Text(text = "interstitial")
+        }
+
+        OutlinedButton(onClick = {
+            model.showRewarded(context)
+        }) {
+            Text(text = "rewarded")
         }
 
         OutlinedButton(onClick = {
