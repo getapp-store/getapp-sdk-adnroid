@@ -22,53 +22,53 @@ class MediationViewModel : ViewModel() {
     fun init(context: Context) {
         interstitial = Interstitial( "1", callbacks = object : InterstitialCallbacks {
             override fun onLoad(ad: InterstitialAdapter) {
-                Log.d(tag, "onLoad: $ad")
+                Log.d(tag, "interstitial onLoad: $ad")
             }
 
             override fun onImpression(ad: InterstitialAdapter, revenue: Double,  data: String) {
-                Log.d(tag, "onImpression: $ad, $revenue, $data")
+                Log.d(tag, "interstitial onImpression: $ad, $revenue, $data")
             }
 
             override fun onClick(ad: InterstitialAdapter) {
-                Log.d(tag, "onClick: $ad")
+                Log.d(tag, "interstitial onClick: $ad")
             }
 
             override fun onClose(ad: InterstitialAdapter) {
-                Log.d(tag, "onClose: $ad")
+                Log.d(tag, "interstitial onClose: $ad")
             }
 
             override fun onNoAd(ad: InterstitialAdapter, reason: String) {
-                Log.d(tag, "no ad")
+                Log.d(tag, "interstitial onNoAd")
             }
 
             override fun onOpen(ad: InterstitialAdapter) {
-                Log.d(tag, "onOpen: $ad")
+                Log.d(tag, "interstitial onOpen: $ad")
             }
 
             override fun onFailure(ad: InterstitialAdapter?, message: String) {
-                Log.e(tag, "onFailure $message")
+                Log.e(tag, "interstitial onFailure $message")
             }
         })
 
         banner = Banner("2", callbacks = object : BannerlCallbacks{
             override fun onLoad(ad: BannerAdapter) {
-                Log.d(tag, "onLoad: $ad")
+                Log.d(tag, "banner onLoad: $ad")
             }
 
             override fun onNoAd(ad: BannerAdapter, reason: String) {
-                Log.d(tag, "no ad")
+                Log.d(tag, "banner onNoAd")
             }
 
             override fun onImpression(ad: BannerAdapter, revenue: Double, data: String) {
-                Log.d(tag, "onImpression: $ad, $revenue, $data")
+                Log.d(tag, "banner onImpression: $ad, $revenue, $data")
             }
 
             override fun onClick(ad: BannerAdapter) {
-                Log.d(tag, "onClick: $ad")
+                Log.d(tag, "banner onClick: $ad")
             }
 
             override fun onFailure(ad: BannerAdapter?, message: String) {
-                Log.e(tag, "onFailure $message")
+                Log.e(tag, "banner onFailure $message")
             }
 
         })
