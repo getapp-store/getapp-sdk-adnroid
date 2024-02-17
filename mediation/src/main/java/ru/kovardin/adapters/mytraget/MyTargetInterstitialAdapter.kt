@@ -76,15 +76,18 @@ class MyTargetInterstitialAdapter(
             override fun onClick(ad: InterstitialAd) {
                 callbacks.onClick(this@MyTargetInterstitialAdapter)
             }
+
             override fun onDisplay(ad: InterstitialAd) {
                 callbacks.onOpen(this@MyTargetInterstitialAdapter)
+
+                val revenue = cpm / 1000
 
                 scope.launch {
                     impressions.impression(
                         placement = placement,
                         data = ImpressionRequest(
                             unit = unit,
-                            revenue = cpm / 1000,
+                            revenue = revenue,
                             data = "",
                         ),
                         callback = object : ImpressionHandler {
@@ -99,12 +102,17 @@ class MyTargetInterstitialAdapter(
                     )
                 }
 
-                callbacks.onImpression(this@MyTargetInterstitialAdapter, "")
+                callbacks.onImpression(
+                    this@MyTargetInterstitialAdapter,
+                    revenue = revenue,
+                    data = "",
+                )
             }
 
             override fun onDismiss(ad: InterstitialAd) {
                 callbacks.onClose(this@MyTargetInterstitialAdapter)
             }
+
             override fun onVideoCompleted(ad: InterstitialAd) {}
         })
 

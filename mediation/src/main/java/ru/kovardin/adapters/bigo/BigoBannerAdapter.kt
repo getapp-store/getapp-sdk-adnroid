@@ -66,12 +66,14 @@ class BigoBannerAdapter(
                     }
 
                     override fun onAdImpression() {
+                        val revenue = (bid?.price ?: 0.0) / 1000
+
                         scope.launch {
                             impressions.impression(
                                 placement = placement,
                                 data = ImpressionRequest(
                                     unit = unit,
-                                    revenue = (bid?.price ?: 0.0) / 1000, // цена одного показа
+                                    revenue = revenue, // цена одного показа
                                     data = ""
                                 ),
                                 callback = object : ImpressionHandler {
@@ -86,7 +88,11 @@ class BigoBannerAdapter(
                             )
                         }
 
-                        callbacks.onImpression(this@BigoBannerAdapter, "")
+                        callbacks.onImpression(
+                            this@BigoBannerAdapter,
+                            revenue = revenue,
+                            data = "",
+                        )
                     }
 
                     override fun onAdClicked() {

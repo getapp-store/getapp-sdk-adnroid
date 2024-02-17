@@ -25,7 +25,7 @@ class MyTargetBannerAdapter(
     private val placement: Int,
     private val unit: String,
     private val callbacks: BannerlCallbacks,
-): BannerAdapter {
+) : BannerAdapter {
     private val tag = "MyTargetBannerAdapter"
     private val network = "mytarget"
 
@@ -72,12 +72,13 @@ class MyTargetBannerAdapter(
             }
 
             override fun onShow(v: MyTargetView) {
+                val revenue = cpm / 1000
                 scope.launch {
                     impressions.impression(
                         placement = placement,
                         data = ImpressionRequest(
                             unit = unit,
-                            revenue = cpm / 1000,
+                            revenue = revenue,
                             data = "",
                         ),
                         callback = object : ImpressionHandler {
@@ -92,7 +93,11 @@ class MyTargetBannerAdapter(
                     )
                 }
 
-                callbacks.onImpression(this@MyTargetBannerAdapter, "")
+                callbacks.onImpression(
+                    this@MyTargetBannerAdapter,
+                    revenue = revenue,
+                    data = "",
+                )
             }
 
             override fun onClick(v: MyTargetView) {

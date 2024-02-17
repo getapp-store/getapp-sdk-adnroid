@@ -104,7 +104,11 @@ class YandexAdsBannerAdapter(
                     )
                 }
 
-                callbacks.onImpression(this@YandexAdsBannerAdapter, data = data?.rawData ?: "")
+                callbacks.onImpression(
+                    this@YandexAdsBannerAdapter,
+                    revenue = data?.revenue() ?: 0.0,
+                    data = data?.rawData ?: "",
+                )
             }
         })
 

@@ -120,7 +120,11 @@ class YandexAdsInterstitialAdapter(
                                 )
                             }
 
-                            callbacks.onImpression(this@YandexAdsInterstitialAdapter, data?.rawData.orEmpty())
+                            callbacks.onImpression(
+                                this@YandexAdsInterstitialAdapter,
+                                revenue = data?.revenue() ?: 0.0,
+                                data = data?.rawData.orEmpty(),
+                            )
                         }
                     })
 

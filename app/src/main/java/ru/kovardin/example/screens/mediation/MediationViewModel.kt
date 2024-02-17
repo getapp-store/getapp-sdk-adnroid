@@ -25,8 +25,8 @@ class MediationViewModel : ViewModel() {
                 Log.d(tag, "onLoad: $ad")
             }
 
-            override fun onImpression(ad: InterstitialAdapter, data: String) {
-                Log.d(tag, "onImpression: $ad, $data")
+            override fun onImpression(ad: InterstitialAdapter, revenue: Double,  data: String) {
+                Log.d(tag, "onImpression: $ad, $revenue, $data")
             }
 
             override fun onClick(ad: InterstitialAdapter) {
@@ -59,8 +59,8 @@ class MediationViewModel : ViewModel() {
                 Log.d(tag, "no ad")
             }
 
-            override fun onImpression(ad: BannerAdapter, data: String) {
-                Log.d(tag, "onImpression: $ad, $data")
+            override fun onImpression(ad: BannerAdapter, revenue: Double, data: String) {
+                Log.d(tag, "onImpression: $ad, $revenue, $data")
             }
 
             override fun onClick(ad: BannerAdapter) {
