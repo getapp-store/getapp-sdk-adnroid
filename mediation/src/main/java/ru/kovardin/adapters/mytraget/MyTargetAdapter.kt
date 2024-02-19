@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.my.target.common.MyTargetManager
 import ru.kovardin.mediation.interfaces.BannerAdapter
-import ru.kovardin.mediation.interfaces.BannerlCallbacks
+import ru.kovardin.mediation.interfaces.BannerCallbacks
 import ru.kovardin.mediation.interfaces.MediationAdapter
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
 import ru.kovardin.mediation.interfaces.InterstitialCallbacks
@@ -39,7 +39,7 @@ class MyTargetAdapter : MediationAdapter {
         context: Context,
         placement: Int,
         unit: String,
-        callbacks: BannerlCallbacks,
+        callbacks: BannerCallbacks,
     ): BannerAdapter {
         return MyTargetBannerAdapter(
             context = context,

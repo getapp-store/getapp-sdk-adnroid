@@ -61,7 +61,7 @@ publishing {
 }
 
 dependencies {
-    implementation("com.yandex.android:mobileads:6.3.0")
+    implementation("com.yandex.android:mobileads:6.4.0")
     implementation("com.my.target:mytarget-sdk:5.19.+")
     implementation("com.bigossp:bigo-ads:4.4.0")
 

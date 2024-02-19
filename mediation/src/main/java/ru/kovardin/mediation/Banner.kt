@@ -9,12 +9,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import ru.kovardin.mediation.interfaces.BannerAdapter
-import ru.kovardin.mediation.interfaces.BannerlCallbacks
+import ru.kovardin.mediation.interfaces.BannerCallbacks
 import ru.kovardin.mediation.services.PlacementResponse
 import ru.kovardin.mediation.services.PlacementsHandler
 import ru.kovardin.mediation.services.PlacementsService
 
-class Banner(private val id: String, private val callbacks: BannerlCallbacks) {
+class Banner(private val id: String, private val callbacks: BannerCallbacks) {
     private val lossReasonLowerThanFloorPrice = 100
     private val lossReasonLowerThanHighestPrice = 101
 
@@ -43,7 +43,7 @@ class Banner(private val id: String, private val callbacks: BannerlCallbacks) {
 
                         val adapter = Mediation.instance.adapters[network] ?: continue
 
-                        adapter.createBanner(context, placement = placement, unit = unit, callbacks = object : BannerlCallbacks {
+                        adapter.createBanner(context, placement = placement, unit = unit, callbacks = object : BannerCallbacks {
                             override fun onLoad(ad: BannerAdapter) {
                                 bets[unit] = ad
 

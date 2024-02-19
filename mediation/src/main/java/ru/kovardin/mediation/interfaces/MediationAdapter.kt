@@ -17,7 +17,7 @@ interface MediationAdapter {
         context: Context,
         placement: Int,
         unit: String,
-        callbacks: BannerlCallbacks,
+        callbacks: BannerCallbacks,
     ): BannerAdapter
 
     fun createRewarded(

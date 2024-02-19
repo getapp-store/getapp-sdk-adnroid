@@ -1,7 +1,7 @@
 package ru.kovardin.mediation.interfaces
 
 
-interface BannerlCallbacks {
+interface BannerCallbacks {
     fun onLoad(ad: BannerAdapter)
     fun onNoAd(ad: BannerAdapter, reason: String)
     fun onImpression(ad: BannerAdapter, revenue: Double, data: String)

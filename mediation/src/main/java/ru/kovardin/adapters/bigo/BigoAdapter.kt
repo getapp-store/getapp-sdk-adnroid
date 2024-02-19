@@ -3,7 +3,7 @@ package ru.kovardin.adapters.bigo
 import android.content.Context
 import android.util.Log
 import ru.kovardin.mediation.interfaces.BannerAdapter
-import ru.kovardin.mediation.interfaces.BannerlCallbacks
+import ru.kovardin.mediation.interfaces.BannerCallbacks
 import ru.kovardin.mediation.interfaces.MediationAdapter
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
 import ru.kovardin.mediation.interfaces.InterstitialCallbacks
@@ -48,7 +48,7 @@ class BigoAdapter : MediationAdapter {
         placement:
         Int,
         unit: String,
-        callbacks: BannerlCallbacks,
+        callbacks: BannerCallbacks,
     ): BannerAdapter {
         return BigoBannerAdapter(
             context = context,

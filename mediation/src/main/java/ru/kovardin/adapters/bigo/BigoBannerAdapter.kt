@@ -9,11 +9,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import ru.kovardin.mediation.interfaces.BannerAdapter
-import ru.kovardin.mediation.interfaces.BannerlCallbacks
+import ru.kovardin.mediation.interfaces.BannerCallbacks
 import ru.kovardin.mediation.services.ImpressionHandler
 import ru.kovardin.mediation.services.ImpressionRequest
 import ru.kovardin.mediation.services.ImpressionsService
-import ru.kovardin.mediation.settings.Settings
 import sg.bigo.ads.api.AdBid
 import sg.bigo.ads.api.AdError
 import sg.bigo.ads.api.AdInteractionListener
@@ -28,7 +27,7 @@ class BigoBannerAdapter(
     private val context: Context, // TODO поправить контекст
     private val placement: Int,
     private val unit: String,
-    private val callbacks: BannerlCallbacks,
+    private val callbacks: BannerCallbacks,
 ) : BannerAdapter {
     private val tag = "BigoBannerAdapter"
     private val network = "bigo" // TODO remove

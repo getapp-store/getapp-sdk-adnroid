@@ -15,7 +15,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import ru.kovardin.adapters.yandex.utils.revenue
 import ru.kovardin.mediation.interfaces.BannerAdapter
-import ru.kovardin.mediation.interfaces.BannerlCallbacks
+import ru.kovardin.mediation.interfaces.BannerCallbacks
 import ru.kovardin.mediation.models.User
 import ru.kovardin.mediation.services.AuctionService
 import ru.kovardin.mediation.services.BidHandler
@@ -29,7 +29,7 @@ class YandexAdsBannerAdapter(
     private val context: Context,
     private val placement: Int,
     private val unit: String,
-    private val callbacks: BannerlCallbacks,
+    private val callbacks: BannerCallbacks,
 ) : BannerAdapter {
     private val tag = "YandexAdsInterstitialAdapter"
     private val network = "yandex"

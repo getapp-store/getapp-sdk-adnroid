@@ -11,7 +11,7 @@ import ru.kovardin.mediation.Banner
 import ru.kovardin.mediation.Interstitial
 import ru.kovardin.mediation.Rewarded
 import ru.kovardin.mediation.interfaces.BannerAdapter
-import ru.kovardin.mediation.interfaces.BannerlCallbacks
+import ru.kovardin.mediation.interfaces.BannerCallbacks
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
 import ru.kovardin.mediation.interfaces.InterstitialCallbacks
 import ru.kovardin.mediation.interfaces.RewardedAdapter
@@ -90,7 +90,7 @@ class MediationViewModel : ViewModel() {
             }
         })
 
-        banner = Banner("2", callbacks = object : BannerlCallbacks{
+        banner = Banner("2", callbacks = object : BannerCallbacks{
             override fun onLoad(ad: BannerAdapter) {
                 Log.d(tag, "banner onLoad: $ad")
             }
