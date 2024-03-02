@@ -29,7 +29,6 @@ class BigoInterstitialAdapter(
     private val callbacks: InterstitialCallbacks,
 ) : InterstitialAdapter {
     private val tag = "BigoInterstitialAdapter"
-    private val network = "bigo"
 
     private var interstitial: InterstitialAd? = null
     private var bid: AdBid? = null
@@ -131,6 +130,6 @@ class BigoInterstitialAdapter(
     }
 
     override fun network(): String {
-        return network
+        return BigoAdapter.NETWORK
     }
 }

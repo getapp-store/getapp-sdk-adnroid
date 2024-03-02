@@ -10,3 +10,7 @@ interface RewardedCallbacks {
     fun onReward(ad: RewardedAdapter, amount: Int, type: String)
     fun onFailure(ad: RewardedAdapter?, message: String)
 }
+
+interface MediationRewardedCallbacks: RewardedCallbacks {
+    fun onFinish()
+}

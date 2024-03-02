@@ -27,7 +27,6 @@ class MyTargetBannerAdapter(
     private val callbacks: BannerCallbacks,
 ) : BannerAdapter {
     private val tag = "MyTargetBannerAdapter"
-    private val network = "mytarget"
 
     val banner = MyTargetView(context);
 
@@ -122,6 +121,6 @@ class MyTargetBannerAdapter(
     }
 
     override fun network(): String {
-        return network
+        return MyTargetAdapter.NETWORK
     }
 }

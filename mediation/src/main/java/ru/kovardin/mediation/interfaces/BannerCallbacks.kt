@@ -8,3 +8,7 @@ interface BannerCallbacks {
     fun onClick(ad: BannerAdapter)
     fun onFailure(ad: BannerAdapter?, message: String)
 }
+
+interface MediationBannerCallbacks : BannerCallbacks {
+    fun onFinish()
+}

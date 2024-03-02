@@ -28,7 +28,6 @@ class BigoRewardedAdapter(
     private val callbacks: RewardedCallbacks,
 ) : RewardedAdapter {
     private val tag = "BigoRewardedAdapter"
-    private val network = "bigo"
 
     private var rewarded: RewardVideoAd? = null
     private var bid: AdBid? = null
@@ -134,6 +133,6 @@ class BigoRewardedAdapter(
     }
 
     override fun network(): String {
-        return network
+        return BigoAdapter.NETWORK
     }
 }

@@ -30,7 +30,6 @@ class BigoBannerAdapter(
     private val callbacks: BannerCallbacks,
 ) : BannerAdapter {
     private val tag = "BigoBannerAdapter"
-    private val network = "bigo" // TODO remove
 
     var banner: BannerAd? = null
     private var bid: AdBid? = null
@@ -123,6 +122,6 @@ class BigoBannerAdapter(
     }
 
     override fun network(): String {
-        return network
+        return BigoAdapter.NETWORK
     }
 }

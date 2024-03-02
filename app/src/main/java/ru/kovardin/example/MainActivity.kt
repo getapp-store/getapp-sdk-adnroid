@@ -1,6 +1,7 @@
 package ru.kovardin.example
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
@@ -13,6 +14,8 @@ import ru.kovardin.example.ui.theme.BillingTheme
 import ru.kovardin.boosty.Boosty
 import ru.kovardin.getappbilling.Billing
 import ru.kovardin.mediation.Mediation
+import ru.kovardin.mediation.interfaces.MediationCallbacks
+import ru.kovardin.mediation.models.Network
 
 class MainActivity : ComponentActivity() {
     val tag = "MainActivity"
@@ -27,6 +30,16 @@ class MainActivity : ComponentActivity() {
                 "cpa" to CpaAdapter(),
                 "bigo" to BigoAdapter(),
             ),
+            callbacks = object : MediationCallbacks {
+                override fun onFinish() {
+                    Log.d(tag, "onFinish")
+                }
+
+                override fun onInitialized(network: String) {
+                    Log.d(tag, "onInitialized")
+                }
+
+            }
         )
 
         Billing.init(

@@ -11,11 +11,11 @@ import ru.kovardin.mediation.Banner
 import ru.kovardin.mediation.Interstitial
 import ru.kovardin.mediation.Rewarded
 import ru.kovardin.mediation.interfaces.BannerAdapter
-import ru.kovardin.mediation.interfaces.BannerCallbacks
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
-import ru.kovardin.mediation.interfaces.InterstitialCallbacks
+import ru.kovardin.mediation.interfaces.MediationBannerCallbacks
+import ru.kovardin.mediation.interfaces.MediationInterstitialCallbacks
+import ru.kovardin.mediation.interfaces.MediationRewardedCallbacks
 import ru.kovardin.mediation.interfaces.RewardedAdapter
-import ru.kovardin.mediation.interfaces.RewardedCallbacks
 
 class MediationViewModel : ViewModel() {
 
@@ -25,7 +25,11 @@ class MediationViewModel : ViewModel() {
     private var banner: Banner? = null
 
     fun init(context: Context) {
-        interstitial = Interstitial( "1", callbacks = object : InterstitialCallbacks {
+        interstitial = Interstitial( "1", callbacks = object : MediationInterstitialCallbacks {
+            override fun onFinish() {
+                Log.d(tag, "interstitial onFinish")
+            }
+
             override fun onLoad(ad: InterstitialAdapter) {
                 Log.d(tag, "interstitial onLoad: $ad")
             }
@@ -55,7 +59,11 @@ class MediationViewModel : ViewModel() {
             }
         })
 
-        rewarded = Rewarded( "3", callbacks = object : RewardedCallbacks {
+        rewarded = Rewarded( "3", callbacks = object : MediationRewardedCallbacks {
+            override fun onFinish() {
+                Log.d(tag, "rewarded onFinish")
+            }
+
             override fun onLoad(ad: RewardedAdapter) {
                 Log.d(tag, "rewarded onLoad: $ad")
             }
@@ -90,8 +98,13 @@ class MediationViewModel : ViewModel() {
             }
         })
 
-        banner = Banner("2", callbacks = object : BannerCallbacks{
+        banner = Banner("2", callbacks = object : MediationBannerCallbacks{
+            override fun onFinish() {
+                Log.d(tag, "banner onFinish")
+            }
+
             override fun onLoad(ad: BannerAdapter) {
+                Log.d(tag, "network: ${ad.network()}")
                 Log.d(tag, "banner onLoad: $ad")
             }
 

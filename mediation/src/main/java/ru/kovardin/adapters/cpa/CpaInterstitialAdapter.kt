@@ -28,7 +28,6 @@ class CpaInterstitialAdapter(
     private val callbacks: InterstitialCallbacks,
 ) : InterstitialAdapter {
     private val tag = "CpaInterstitialAdapter"
-    private val network = "cpa"
 
     private var cpm: Double = 0.0
     private var bid: Double = 0.0
@@ -106,6 +105,6 @@ class CpaInterstitialAdapter(
     }
 
     override fun network(): String {
-        return network
+        return CpaAdapter.NETWORK
     }
 }

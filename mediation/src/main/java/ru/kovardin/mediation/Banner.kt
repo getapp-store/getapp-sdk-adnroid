@@ -10,11 +10,13 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import ru.kovardin.mediation.interfaces.BannerAdapter
 import ru.kovardin.mediation.interfaces.BannerCallbacks
+import ru.kovardin.mediation.interfaces.MediationBannerCallbacks
 import ru.kovardin.mediation.services.PlacementResponse
 import ru.kovardin.mediation.services.PlacementsHandler
 import ru.kovardin.mediation.services.PlacementsService
+import ru.kovardin.mediation.utils.CallbackAggregator
 
-class Banner(private val id: String, private val callbacks: BannerCallbacks) {
+class Banner(private val id: String, private val callbacks: MediationBannerCallbacks) {
     private val lossReasonLowerThanFloorPrice = 100
     private val lossReasonLowerThanHighestPrice = 101
 
@@ -35,7 +37,17 @@ class Banner(private val id: String, private val callbacks: BannerCallbacks) {
 
                 override fun onSuccess(resp: PlacementResponse) {
                     // бежим по всем адаптерам и получаем токены для бидинга
-                    for (u in resp.units) {
+
+                    val units = resp.units.filter {
+                        Mediation.instance.adapters.contains(it.network)
+                    }
+
+                    val aggregator = CallbackAggregator(units.size)
+                    aggregator.final = {
+                        callbacks.onFinish()
+                    }
+
+                    for (u in units) {
 
                         val unit = u.unit
                         val placement = u.placement
@@ -48,10 +60,14 @@ class Banner(private val id: String, private val callbacks: BannerCallbacks) {
                                 bets[unit] = ad
 
                                 callbacks.onLoad(ad)
+
+                                aggregator.increment();
                             }
 
                             override fun onNoAd(ad: BannerAdapter, reason: String) {
                                 callbacks.onNoAd(ad, reason)
+
+                                aggregator.increment();
                             }
 
                             override fun onImpression(ad: BannerAdapter, revenue: Double, data: String) {
@@ -68,7 +84,6 @@ class Banner(private val id: String, private val callbacks: BannerCallbacks) {
                         }).load()
                     }
                 }
-
             })
         }
     }

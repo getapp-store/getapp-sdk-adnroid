@@ -7,13 +7,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import ru.kovardin.mediation.interfaces.MediationRewardedCallbacks
 import ru.kovardin.mediation.interfaces.RewardedAdapter
 import ru.kovardin.mediation.interfaces.RewardedCallbacks
 import ru.kovardin.mediation.services.PlacementResponse
 import ru.kovardin.mediation.services.PlacementsHandler
 import ru.kovardin.mediation.services.PlacementsService
+import ru.kovardin.mediation.utils.CallbackAggregator
 
-class Rewarded(private val id: String, private val callbacks: RewardedCallbacks) {
+class Rewarded(private val id: String, private val callbacks: MediationRewardedCallbacks) {
     private val lossReasonLowerThanFloorPrice = 100
     private val lossReasonLowerThanHighestPrice = 101
 
@@ -34,7 +36,16 @@ class Rewarded(private val id: String, private val callbacks: RewardedCallbacks)
 
                 override fun onSuccess(resp: PlacementResponse) {
                     // бежим по всем адаптерам и получаем токены для бидинга
-                    for (u in resp.units) {
+                    val units = resp.units.filter {
+                        Mediation.instance.adapters.contains(it.network)
+                    }
+
+                    val aggregator = CallbackAggregator(units.size)
+                    aggregator.final = {
+                        callbacks.onFinish()
+                    }
+
+                    for (u in units) {
 
                         val unit = u.unit
                         val placement = u.placement
@@ -47,10 +58,14 @@ class Rewarded(private val id: String, private val callbacks: RewardedCallbacks)
                                 bets[unit] = ad
 
                                 callbacks.onLoad(ad)
+
+                                aggregator.increment()
                             }
 
                             override fun onNoAd(ad: RewardedAdapter, reason: String) {
                                 callbacks.onNoAd(ad, reason)
+
+                                aggregator.increment()
                             }
 
                             override fun onOpen(ad: RewardedAdapter) {

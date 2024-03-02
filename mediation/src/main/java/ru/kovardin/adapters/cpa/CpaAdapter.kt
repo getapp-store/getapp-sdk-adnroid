@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import ru.kovardin.mediation.interfaces.BannerAdapter
 import ru.kovardin.mediation.interfaces.BannerCallbacks
+import ru.kovardin.mediation.interfaces.InitializedCallbacks
 import ru.kovardin.mediation.interfaces.MediationAdapter
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
 import ru.kovardin.mediation.interfaces.InterstitialCallbacks
@@ -12,10 +13,10 @@ import ru.kovardin.mediation.interfaces.RewardedCallbacks
 
 
 class CpaAdapter : MediationAdapter {
-    private val tag = "cpa"
 
-    override fun init(context: Context, key: String) {
-        Log.d(tag, "init cpa adapter")
+    override fun init(context: Context, key: String, callbacks: InitializedCallbacks) {
+        Log.d(NETWORK, "init cpa adapter")
+        callbacks.onInitialized(NETWORK)
     }
 
     override fun createInterstitial(
@@ -48,5 +49,9 @@ class CpaAdapter : MediationAdapter {
         callbacks: RewardedCallbacks,
     ): RewardedAdapter {
         TODO("Not yet implemented")
+    }
+
+    companion object {
+        val NETWORK = "yandex"
     }
 }

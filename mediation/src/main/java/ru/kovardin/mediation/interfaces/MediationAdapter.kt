@@ -4,7 +4,7 @@ import android.content.Context
 
 
 interface MediationAdapter {
-    fun init(context: Context, key: String)
+    fun init(context: Context, key: String, callbacks: InitializedCallbacks)
 
     fun createInterstitial(
         context: Context,

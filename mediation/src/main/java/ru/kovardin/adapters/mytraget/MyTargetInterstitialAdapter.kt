@@ -29,7 +29,6 @@ class MyTargetInterstitialAdapter(
     private val callbacks: InterstitialCallbacks,
 ) : InterstitialAdapter {
     private val tag = "MyTargetInterstitialAdapter"
-    private val network = "mytarget"
 
     private var cpm: Double = 0.0
     private var bid: Double = 0.0
@@ -132,6 +131,6 @@ class MyTargetInterstitialAdapter(
     }
 
     override fun network(): String {
-        return network
+        return MyTargetAdapter.NETWORK
     }
 }

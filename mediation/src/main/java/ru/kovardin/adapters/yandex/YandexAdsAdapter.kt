@@ -5,6 +5,7 @@ import android.util.Log
 import com.yandex.mobile.ads.common.MobileAds
 import ru.kovardin.mediation.interfaces.BannerAdapter
 import ru.kovardin.mediation.interfaces.BannerCallbacks
+import ru.kovardin.mediation.interfaces.InitializedCallbacks
 import ru.kovardin.mediation.interfaces.MediationAdapter
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
 import ru.kovardin.mediation.interfaces.InterstitialCallbacks
@@ -13,13 +14,11 @@ import ru.kovardin.mediation.interfaces.RewardedCallbacks
 
 
 class YandexAdsAdapter : MediationAdapter {
-    private val tag = "yandex"
-
-    override fun init(context: Context, key: String) {
-        Log.d(tag, "init yandex adapter")
+    override fun init(context: Context, key: String, callbacks: InitializedCallbacks) {
+        Log.d(NETWORK, "init yandex adapter")
 
         MobileAds.initialize(context) {
-
+            callbacks.onInitialized(NETWORK)
         }
     }
 
@@ -63,5 +62,9 @@ class YandexAdsAdapter : MediationAdapter {
             unit = unit,
             callbacks = callbacks,
         )
+    }
+
+    companion object {
+        const val NETWORK = "yandex"
     }
 }

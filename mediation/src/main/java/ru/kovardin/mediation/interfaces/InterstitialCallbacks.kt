@@ -10,3 +10,7 @@ interface InterstitialCallbacks {
     fun onClose(ad: InterstitialAdapter)
     fun onFailure(ad: InterstitialAdapter?, message: String)
 }
+
+interface MediationInterstitialCallbacks : InterstitialCallbacks {
+    fun onFinish()
+}

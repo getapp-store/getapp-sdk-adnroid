@@ -32,7 +32,6 @@ class YandexAdsBannerAdapter(
     private val callbacks: BannerCallbacks,
 ) : BannerAdapter {
     private val tag = "YandexAdsInterstitialAdapter"
-    private val network = "yandex"
 
     private val banner = BannerAdView(context)
 
@@ -130,6 +129,6 @@ class YandexAdsBannerAdapter(
     }
 
     override fun network(): String {
-        return network
+        return YandexAdsAdapter.NETWORK
     }
 }

@@ -21,6 +21,7 @@ import ru.kovardin.mediation.services.ImpressionHandler
 import ru.kovardin.mediation.services.ImpressionRequest
 import ru.kovardin.mediation.services.ImpressionsService
 
+
 class MyTargetRewardedAdapter(
     private val context: Context,
     private val placement: Int,
@@ -28,7 +29,6 @@ class MyTargetRewardedAdapter(
     private val callbacks: RewardedCallbacks,
 ) : RewardedAdapter {
     private val tag = "MyTargetRewardedAdapter"
-    private val network = "mytarget"
 
     private var cpm: Double = 0.0
     private var bid: Double = 0.0
@@ -132,6 +132,6 @@ class MyTargetRewardedAdapter(
     }
 
     override fun network(): String {
-        return network
+        return MyTargetAdapter.NETWORK
     }
 }

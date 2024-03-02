@@ -35,7 +35,6 @@ class YandexAdsInterstitialAdapter(
     private val callbacks: InterstitialCallbacks,
 ) : InterstitialAdapter {
     private val tag = "YandexAdsInterstitialAdapter"
-    private val network = "yandex"
 
     private var cpm: Double = 0.0
     private var bid: Double = 0.0
@@ -159,6 +158,6 @@ class YandexAdsInterstitialAdapter(
     }
 
     override fun network(): String {
-        return network
+        return YandexAdsAdapter.NETWORK
     }
 }

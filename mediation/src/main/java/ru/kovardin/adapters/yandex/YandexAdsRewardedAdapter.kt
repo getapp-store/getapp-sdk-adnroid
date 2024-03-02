@@ -35,7 +35,6 @@ class YandexAdsRewardedAdapter(
     private val callbacks: RewardedCallbacks,
 ): RewardedAdapter {
     private val tag = "YandexAdsRewardedAdapter"
-    private val network = "yandex"
 
     private var cpm: Double = 0.0
     private var bid: Double = 0.0
@@ -163,6 +162,6 @@ class YandexAdsRewardedAdapter(
     }
 
     override fun network(): String {
-        return network
+        return YandexAdsAdapter.NETWORK
     }
 }

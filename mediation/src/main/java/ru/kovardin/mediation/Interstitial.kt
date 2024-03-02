@@ -9,12 +9,14 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import ru.kovardin.mediation.interfaces.InterstitialAdapter
 import ru.kovardin.mediation.interfaces.InterstitialCallbacks
+import ru.kovardin.mediation.interfaces.MediationInterstitialCallbacks
 import ru.kovardin.mediation.services.PlacementsHandler
 import ru.kovardin.mediation.services.PlacementResponse
 import ru.kovardin.mediation.services.PlacementsService
+import ru.kovardin.mediation.utils.CallbackAggregator
 
 
-class Interstitial(private val id: String, private val callbacks: InterstitialCallbacks) {
+class Interstitial(private val id: String, private val callbacks: MediationInterstitialCallbacks) {
     private val lossReasonLowerThanFloorPrice = 100
     private val lossReasonLowerThanHighestPrice = 101
 
@@ -35,7 +37,16 @@ class Interstitial(private val id: String, private val callbacks: InterstitialCa
 
                 override fun onSuccess(resp: PlacementResponse) {
                     // бежим по всем адаптерам и получаем токены для бидинга
-                    for (u in resp.units) {
+                    val units = resp.units.filter {
+                        Mediation.instance.adapters.contains(it.network)
+                    }
+
+                    val aggregator = CallbackAggregator(units.size)
+                    aggregator.final = {
+                        callbacks.onFinish()
+                    }
+
+                    for (u in units) {
 
                         val unit = u.unit
                         val placement = u.placement
@@ -48,10 +59,14 @@ class Interstitial(private val id: String, private val callbacks: InterstitialCa
                                 bets[unit] = ad
 
                                 callbacks.onLoad(ad)
+
+                                aggregator.increment()
                             }
 
                             override fun onNoAd(ad: InterstitialAdapter, reason: String) {
                                 callbacks.onNoAd(ad, reason)
+
+                                aggregator.increment()
                             }
 
                             override fun onOpen(ad: InterstitialAdapter) {
@@ -76,7 +91,6 @@ class Interstitial(private val id: String, private val callbacks: InterstitialCa
                         }).load()
                     }
                 }
-
             })
         }
     }
