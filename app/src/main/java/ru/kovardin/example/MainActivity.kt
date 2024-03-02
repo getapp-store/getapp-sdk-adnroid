@@ -38,7 +38,6 @@ class MainActivity : ComponentActivity() {
                 override fun onInitialized(network: String) {
                     Log.d(tag, "onInitialized")
                 }
-
             }
         )
 

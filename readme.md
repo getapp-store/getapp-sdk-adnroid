@@ -15,8 +15,47 @@ repositories {
 }
 ```
 
-Указываем зависимости
+## Как SDK доступны
 
-```kt
+Сейчас дотсупны только три SDK
+
+- Медиация
+- Подписки через boosty
+- Биллинг с помощью юмани
+
+
+### Медиация
+
+Подключаем медиацию в проект
+
+```
 implementation 'ru.kovardin:mediation:0.1.0'
 ```
+
+Инициализируем на старте приложения
+
+```kt
+Mediation.init(
+    applicationContext,
+    "1",
+    adapters = mapOf(
+        "yandex" to YandexAdsAdapter(),
+        "mytarget" to MyTargetAdapter(),
+        "cpa" to CpaAdapter(),
+        "bigo" to BigoAdapter(),
+    ),
+    callbacks = object : MediationCallbacks {
+        override fun onFinish() {
+            Log.d(tag, "onFinish")
+        }
+
+        override fun onInitialized(network: String) {
+            Log.d(tag, "onInitialized")
+        }
+    }
+)
+```
+
+### Подписки через boosty
+
+### Биллинг с помощью юмани
