@@ -10,9 +10,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-//        maven {
-//            url = uri("https://repo.getapp.store")
-//        }
+        maven {
+            url = uri("https://repo.getapp.store")
+        }
     }
 }
 rootProject.name = "getapp-sdk"

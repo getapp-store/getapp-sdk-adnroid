@@ -48,7 +48,6 @@ android {
 
 dependencies {
 
-    project(path: ':mediation')
     implementation project(path: ':billing')
     implementation project(path: ':boosty')
     implementation project(path: ':mediation')

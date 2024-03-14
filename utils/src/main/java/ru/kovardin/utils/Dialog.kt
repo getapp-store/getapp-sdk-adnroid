@@ -30,16 +30,14 @@ class Dialog(val context: Context, val url: String) {
         web.loadData("<html><body><h1>Loading...</h1></body></html>", "text/HTML", "UTF-8")
         web.settings.javaScriptEnabled = true
         web.settings.userAgentString = "Mozilla/5.0 (Linux; Android 8.0.0; SM-G955U Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Mobile Safari/537.36"
-//        web.settings.useWideViewPort = false
-//        web.getSettings().setJavaScriptEnabled(true);
-        web.getSettings().setLoadWithOverviewMode(true);
-        web.getSettings().setUseWideViewPort(true);
-        web.getSettings().setSupportZoom(true);
-        web.getSettings().setBuiltInZoomControls(true);
-        web.getSettings().setDisplayZoomControls(false);
+//        web.settings.useWideViewPort = true
+//        web.settings.loadWithOverviewMode = true;
+        web.settings.setSupportZoom(true);
+        web.settings.builtInZoomControls = true;
+        web.settings.displayZoomControls = false;
 
-        web.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-        web.setScrollbarFadingEnabled(false);
+        web.scrollBarStyle = WebView.SCROLLBARS_OUTSIDE_OVERLAY;
+        web.isScrollbarFadingEnabled = false;
     }
 
     fun setOnDismissListener(listener: DialogInterface.OnDismissListener?) {
@@ -59,6 +57,7 @@ class Dialog(val context: Context, val url: String) {
 
         web.loadUrl(url)
 
+        sheet.behavior.setPeekHeight((height * 0.75).toInt())
         sheet.setContentView(view)
         sheet.show()
 

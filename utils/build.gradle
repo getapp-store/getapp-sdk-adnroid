@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'maven-publish'
 }
 
 android {
@@ -26,6 +27,30 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+}
+
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'ru.kovardin'
+            artifactId = 'utils'
+            version = '0.1.1'
+
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
+
+    //  ./gradlew utils:publishReleaseToGetappRepository
+    repositories {
+        mavenLocal()
+
+        maven {
+            name = "getapp"
+            url = uri("${project.buildDir}/repo")
+        }
     }
 }
 

@@ -36,7 +36,7 @@ publishing {
         release(MavenPublication) {
             groupId = 'ru.kovardin'
             artifactId = 'billing'
-            version = '0.1.0'
+            version = '0.1.1'
 
             afterEvaluate {
                 from components.release
@@ -57,6 +57,9 @@ publishing {
 
 dependencies {
 
+//    implementation project(path: ':utils') // для разработки
+    implementation 'ru.kovardin:utils:0.1.1'
+
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
@@ -73,5 +76,4 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor")
     implementation 'com.google.code.gson:gson:2.10.1'
 
-    implementation project(path: ':utils')
 }
